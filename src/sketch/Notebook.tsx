@@ -51,6 +51,9 @@ export function Notebook({ sketch, upto, animate = true, className = '', pencil 
     return { m, total: t };
   }, [sketch, upto, animate]);
 
+  // Eskizde kullanılan tarama renkleri (her birine bir desen tanımlanır).
+  const hatchColors = useMemo(() => [...new Set(sketch.items.filter((i) => i.k === 'hatch').map((i) => i.color))], [sketch]);
+
   const rest: [number, number] = [W - 70, H - 30];
   const [pen, setPen] = useState<{ x: number; y: number; lifted: boolean; t: number }>({ x: rest[0], y: rest[1], lifted: true, t: 0 });
   const timers = useRef<number[]>([]);
@@ -95,9 +98,13 @@ export function Notebook({ sketch, upto, animate = true, className = '', pencil 
             <feColorMatrix in="n" type="matrix" values="0 0 0 0 0.93  0 0 0 0 0.9  0 0 0 0 0.84  0 0 0 -0.35 0.3" />
             <feComposite in2="SourceGraphic" operator="over" />
           </filter>
-          <pattern id={`${uid}-hatch`} width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(38)">
-            <line x1="0" y1="0" x2="0" y2="7" stroke="currentColor" strokeWidth="2.2" />
-          </pattern>
+          {/* Her tarama rengi için ayrı desen. `currentColor` desenin içinde çalışmıyor
+              (tarayıcı onu <defs> içindeki kendi rengiyle çözüyor) — hepsi gri çiziliyordu. */}
+          {hatchColors.map((c, i) => (
+            <pattern key={c} id={`${uid}-h${i}`} width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(38)">
+              <line x1="0" y1="0" x2="0" y2="7" stroke={c} strokeWidth="2.2" />
+            </pattern>
+          ))}
           <filter id="nb-pencil-shadow" x="-20%" y="-50%" width="140%" height="200%"><feGaussianBlur stdDeviation="3.2" /></filter>
           {sketch.items.map((it, i) =>
             it.k === 'text' && it.step <= upto ? (
@@ -126,7 +133,7 @@ export function Notebook({ sketch, upto, animate = true, className = '', pencil 
               );
             }
             if (it.k === 'hatch') {
-              return <rect key={i} className={cls ? 'nb-fade' : undefined} style={{ ...anim(i), color: it.color }} x={it.x} y={it.y} width={Math.max(0, it.wd)} height={it.h} fill={`url(#${uid}-hatch)`} opacity={0.7} />;
+              return <rect key={i} className={cls ? 'nb-fade' : undefined} style={anim(i)} x={it.x} y={it.y} width={Math.max(0, it.wd)} height={it.h} fill={`url(#${uid}-h${hatchColors.indexOf(it.color)})`} opacity={0.7} />;
             }
             return (
               <text key={i} x={it.x} y={it.y} textAnchor={it.anchor} fontFamily="Caveat, 'Comic Sans MS', cursive" fontWeight={700} fontSize={it.size} fill={it.color} clipPath={`url(#${uid}-c${i})`}>

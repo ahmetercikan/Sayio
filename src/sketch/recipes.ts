@@ -91,7 +91,7 @@ const paintRows = (sk: SK, g: Grid, r1: number, r2: number, color: string) =>
  */
 const noteY = (g: Grid) => g.y + g.H + 34;
 const note = (sk: SK, g: Grid, t: string, color: string) =>
-  sk.text(g.x + g.W, noteY(g), t, { size: 25, color, anchor: 'end' });
+  sk.text(g.x + g.W - 6, noteY(g), t, { size: 25, color, anchor: 'end' });
 
 /**
  * Ailenin tek satırlık kuralı, defterin en altına — öğretmenin tahtaya yazdığı sonuç.
