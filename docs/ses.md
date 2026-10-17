@@ -25,6 +25,11 @@ Bunları tekrar denemeyin, hepsi ölçüldü:
 3. **Soru işareti iki farklı şeydir.** `8 + ? = 13` içindeki `?` "kaç" diye okunur; `Kaç kaldı?`
    sonundaki `?` okunmaz, yerinde kalır ki ses soru tonunu versin. (Eskiden hepsi "kaç" okunuyor,
    "Kaç kaldı kaç" gibi anlamsız cümleler çıkıyordu.)
+4. **Aynı adım ekranda üç ayrı cümledir.** Toplama betiği üçünü de üretmeli, yoksa biri cihaz sesine
+   düşer ve çocuk cümlenin ortasında ses değişimi duyar:
+   - Keşfet, adımı açarken kutuyu **dolu** okur: `Önce 10 kere al: 8 × 10 = 80`
+   - Birlikte yapalım kutuyu **boş** sorar: `Önce 10 kere al: 8 × 10 = ?`
+   - Sen yap / günün turu yönergeyle sorar: `Kolay yolu düşün ve cevapla! 8 × 5 = ?`
 
 ## Neyin sesi var?
 
@@ -32,9 +37,14 @@ Bunları tekrar denemeyin, hepsi ölçüldü:
 | --- | --- | --- |
 | Sabit yönergeler, ders fikirleri, övgüler | **Her yaş** | En çok duyulan cümleler, sayısı az |
 | Sorular ve sözel problemler | **4-7 yaş** | Anlatım orada otomatik açık, çocuk okuyamıyor |
-| 8-14 yaşın soruları | Yok | O yaşta anlatım otomatik açılmaz; çocuk ekrandan okur |
+| **Çarpım tablosu bölümü** | **Her yaş, her çarpan** | 2. sınıf konuyu dinleyerek anlıyor; bölüm 10 aile × 1-10 çarpan, yani tamamı üretilebiliyor |
+| 8-14 yaşın püf noktası soruları | Yok | O yaşta anlatım otomatik açılmaz; çocuk ekrandan okur |
 
-Toplam **2.979 cümle**, ~94 MB. 4-7 yaş kapsaması **%100** (ölçüldü).
+Toplam **4.515 cümle**, ~137 MB. Ölçülen kapsama: 4-7 yaş **%100** (478.000 cümle denendi),
+çarpım tablosu **%100** (872 cümle; 10 ailenin 1-10 arası her çarpanı + günün turundaki 55 çarpım).
+
+Çarpım bölümünde anlatım **her yaşta otomatik açılır** (`autoSpeak`, `src/pages/Lesson.tsx` ve
+`src/pages/TimesRound.tsx`) — konu yeni olduğu için 8-10 yaş da dinleyerek öğreniyor.
 
 ### Küçüklerde çeşitlilik neden dar?
 

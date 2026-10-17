@@ -94,7 +94,7 @@ export default function TimesRound() {
       </header>
       <main className="lesson__main">
         {!done && problem ? (
-          <ProblemRunner key={`${round}-${idx}`} problem={problem} band={profile.band} mode="solo" onDone={onDone} />
+          <ProblemRunner key={`${round}-${idx}`} problem={problem} band={profile.band} mode="solo" onDone={onDone} autoSpeak />
         ) : (
           <div className="result rise">
             <Mascot size={130} mood="wow" className="float" />

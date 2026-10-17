@@ -47,6 +47,9 @@ function LessonFlow({ trick }: { trick: Trick }) {
   const settings = useApp((s) => s.settings);
   const level = data.tricks[trick.id]?.level ?? 1;
   const young = profile.band === 'minik' || profile.band === 'kesif';
+  // Çarpım tablosu yeni bir konu: 2. sınıf çocuğu dinleyerek anlıyor, bu yüzden anlatım
+  // her yaşta otomatik açılır (bölümün bütün cümlelerinin doğal ses kaydı var).
+  const carpim = trick.group === 'carpim';
   const nG = 2;
   const nS = profile.band === 'minik' ? 3 : profile.band === 'kesif' ? 4 : 5;
 
@@ -120,10 +123,10 @@ function LessonFlow({ trick }: { trick: Trick }) {
           <Intro trick={trick} example={example} young={young} onStart={() => { sfx.pop(); setPhase('guided'); setIdx(0); }} />
         )}
         {phase === 'guided' && (
-          <ProblemRunner key={`g${round}-${idx}`} problem={guidedQs[idx]} band={profile.band} mode="guided" onDone={onGuided} />
+          <ProblemRunner key={`g${round}-${idx}`} problem={guidedQs[idx]} band={profile.band} mode="guided" onDone={onGuided} autoSpeak={young || carpim} />
         )}
         {phase === 'solo' && (
-          <ProblemRunner key={`s${round}-${idx}`} problem={soloQs[idx]} band={profile.band} mode="solo" onDone={onSolo} />
+          <ProblemRunner key={`s${round}-${idx}`} problem={soloQs[idx]} band={profile.band} mode="solo" onDone={onSolo} autoSpeak={young || carpim} />
         )}
         {phase === 'done' && result && (
           <div className="result rise">

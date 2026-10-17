@@ -50,6 +50,67 @@ const finish = (sk: SK, q: Box[], ans: number) => {
 };
 
 // ------------------------------------------------------------------------------------------------
+// Çarpım kutusu (dizi modeli) — çarpım tablosu derslerinin ortak tahtası
+// ------------------------------------------------------------------------------------------------
+
+const GX = 348, GY = 140, GW = 286, GH = 250;
+
+interface Grid { x: number; y: number; cell: number; W: number; H: number; cx: (c: number) => number; cy: (r: number) => number }
+
+/**
+ * Çarpımın kutusu: `rows` satır × `cols` sütun. Kareler hep kare kalır (oran bozulmasın),
+ * kutu sağ alana ortalanır. Satır/sütun çizgileri tek kalem darbesi olarak çizilir ki
+ * 10 × 10'luk kutu bile hızlı çizilsin. Kenarda satır ve sütun sayısı yazılıdır.
+ */
+function board(sk: SK, rows: number, cols: number, o: { split?: number } = {}): Grid {
+  const cell = Math.min(40, GW / cols, GH / rows);
+  const W = cell * cols, H = cell * rows;
+  const x = GX + (GW - W) / 2, y = GY;
+  sk.rect(x, y, W, H);
+  let dr = '';
+  for (let r = 1; r < rows; r++) dr += `M${x + 3},${y + r * cell} L${x + W - 3},${y + r * cell} `;
+  if (dr) sk.path(dr, [x + 3, y + cell], [x + W - 3, y + (rows - 1) * cell], { w: 1.6 });
+  let dc = '';
+  for (let c = 1; c < cols; c++) dc += `M${x + c * cell},${y + 3} L${x + c * cell},${y + H - 3} `;
+  if (dc) sk.path(dc, [x + cell, y + 3], [x + (cols - 1) * cell, y + H - 3], { w: 1.6 });
+  sk.text(x + W / 2, y - 13, cols, { size: 26, color: BL, anchor: 'middle' });
+  sk.text(x - 11, y + H / 2 + 9, rows, { size: 26, color: BL, anchor: 'end' });
+  if (o.split && o.split < cols) sk.line(x + o.split * cell, y - 8, x + o.split * cell, y + H + 8, { color: SU, w: 3 });
+  return { x, y, cell, W, H, cx: (c) => x + c * cell, cy: (r) => y + r * cell };
+}
+
+/** Kutunun sütun aralığını boyar. */
+const paintCols = (sk: SK, g: Grid, c1: number, c2: number, color: string) =>
+  sk.hatch(g.cx(c1) + 3, g.y + 3, (c2 - c1) * g.cell - 6, g.H - 6, color);
+/** Kutunun satır aralığını boyar. */
+const paintRows = (sk: SK, g: Grid, r1: number, r2: number, color: string) =>
+  sk.hatch(g.x + 3, g.cy(r1) + 3, g.W - 6, (r2 - r1) * g.cell - 6, color);
+/**
+ * Kutunun altına kısa not (boyanan parçanın ne olduğu). Sağ kenara yaslanır — ortalanınca
+ * uzun notlar defterin dışına taşıyor. Sol sütundaki denklemlerin de altına iner.
+ */
+const noteY = (g: Grid) => g.y + g.H + 34;
+const note = (sk: SK, g: Grid, t: string, color: string) =>
+  sk.text(g.x + g.W, noteY(g), t, { size: 25, color, anchor: 'end' });
+
+/**
+ * Ailenin tek satırlık kuralı, defterin en altına — öğretmenin tahtaya yazdığı sonuç.
+ * `y` sol sütunun bittiği yer; kutu daha aşağı iniyorsa kural onun da altına geçer.
+ */
+function rule(sk: SK, p: Problem, g: Grid, y: number) {
+  const f = Object.values(FAMILIES).find((x) => x.trickId === p.trickId);
+  if (f) sk.text(X0, Math.max(y, noteY(g) + 44), f.short, { size: 26, color: SU });
+}
+
+/** Tek adımlı derslerde: cevabı sorunun kutusuna yaz ve halkaya al. */
+const crown = (sk: SK, q: Box[], ans: number) => {
+  const b = qBox(q);
+  if (!b) return;
+  sk.fill(b, fmt(ans));
+  sk.ringBox(b);
+};
+
+// ------------------------------------------------------------------------------------------------
 // Genel eskiz (yedek)
 // ------------------------------------------------------------------------------------------------
 function generic(p: Problem, sk: SK) {
@@ -648,9 +709,172 @@ const R: Record<string, Recipe> = {
     eqRow(sk, X0, 320, `${unit} × ${a} = ?`, unit * a, { size: 48, color: CO, ring: true });
     finish(sk, q, p.answer);
   },
-  // Çarpım tablosu dersleri: kolay yol zaten "adım adım yazılan iki satır"dır
-  // (8 × 5 → 8 × 10 = 80 → 80 ÷ 2 = 40), yani genel eskiz senaryosu birebir uygun.
-  ...Object.fromEntries(Object.values(FAMILIES).map((f) => [f.trickId, generic as Recipe])),
+  // ----------------------------------------------------------------------------------------------
+  // Çarpım tablosu — 10 ailenin kolay yolu
+  //
+  // Hepsi aynı öğretmen hareketini izler: soru deftere yazılır, sağa çarpımın KUTUSU çizilir
+  // (dizi modeli: kaç satır, kaç sütun), sonra kolay yol o kutunun üstünde gösterilir. Böylece
+  // çocuk "neden" ile "nasıl"ı yan yana görür: solda sayılar, sağda sebebi.
+  //
+  // Renk dili her derste aynıdır:
+  //   turkuaz    → kolay yolun ilk parçası ("önce 5 kere al")
+  //   mercan     → ikinci parça: ya eklenen ya geri verilen; hangisi olduğunu kutunun altındaki not söyler
+  //   sarı çizgi → kolay yolun kutuyu kestiği yer
+  // 10'dan geri veren derslerde (5, 9, 8) kutu baştan 10 sütun çizilir: "10 kolay, fazlasını geri ver".
+  // ----------------------------------------------------------------------------------------------
+
+  'carpim-1': (p, sk) => {
+    const x = nums(p.expr)[0];
+    const q = question(p, sk);
+    const g = board(sk, 1, x);
+    sk.step(1);
+    paintRows(sk, g, 0, 1, TE);
+    note(sk, g, `bir sıra: ${x} tane`, TE);
+    sk.text(X0, 206, 'Bir kere almak →', { size: 32, color: TE });
+    sk.text(X0, 256, 'sayı kendisi kalır!', { size: 32, color: CO });
+    crown(sk, q, p.answer);
+    rule(sk, p, g, 320);
+  },
+
+  'carpim-10': (p, sk) => {
+    const x = nums(p.expr)[0];
+    const q = question(p, sk);
+    const g = board(sk, x, 10);
+    note(sk, g, `${x} satır, her satır bir onluk`, BL);
+    sk.step(1);
+    const a = sk.text(X0, 232, x, { size: 62, color: TE });
+    const z = sk.text(a.x2 + 3, 232, '0', { size: 62, color: CO });
+    sk.ring((a.x1 + z.x2) / 2, 212, (z.x2 - a.x1) / 2 + 15, 38, { color: CO });
+    sk.text(X0, 296, 'sonuna bir sıfır!', { size: 30, color: CO });
+    crown(sk, q, p.answer);
+    rule(sk, p, g, 348);
+  },
+
+  'carpim-2': (p, sk) => {
+    const x = nums(p.expr)[0];
+    const q = question(p, sk);
+    const g = board(sk, 2, x);
+    sk.step(1);
+    paintRows(sk, g, 0, 1, TE);
+    paintRows(sk, g, 1, 2, CO);
+    note(sk, g, 'iki sıra = iki katı', CO);
+    eqRow(sk, X0, 226, `${x} + ${x} = ?`, 2 * x, { size: 50, color: CO, ring: true });
+    finish(sk, q, p.answer);
+    rule(sk, p, g, 340);
+  },
+
+  'carpim-5': (p, sk) => {
+    const x = nums(p.expr)[0];
+    const q = question(p, sk);
+    const g = board(sk, x, 10, { split: 5 });
+    sk.step(1);
+    eqRow(sk, X0, 200, `${x} × 10 = ?`, 10 * x, { size: 46, color: TE });
+    sk.text(X0, 244, 'önce 10 kere al', { size: 27, color: TE });
+    sk.step(2);
+    paintCols(sk, g, 5, 10, CO);
+    note(sk, g, "5, 10'un yarısı", CO);
+    eqRow(sk, X0, 318, `${10 * x} ÷ 2 = ?`, 5 * x, { size: 46, color: CO, ring: true });
+    finish(sk, q, p.answer);
+    rule(sk, p, g, 372);
+  },
+
+  'carpim-9': (p, sk) => {
+    const x = nums(p.expr)[0];
+    const q = question(p, sk);
+    const g = board(sk, x, 10, { split: 9 });
+    sk.step(1);
+    eqRow(sk, X0, 200, `${x} × 10 = ?`, 10 * x, { size: 46, color: TE });
+    sk.text(X0, 244, 'önce 10 kere al', { size: 27, color: TE });
+    sk.step(2);
+    paintCols(sk, g, 9, 10, CO);
+    note(sk, g, `bir grup fazla: ${x} geri`, CO);
+    eqRow(sk, X0, 318, `${10 * x} − ${x} = ?`, 9 * x, { size: 46, color: CO, ring: true });
+    finish(sk, q, p.answer);
+    rule(sk, p, g, 372);
+  },
+
+  'carpim-4': (p, sk) => {
+    const x = nums(p.expr)[0];
+    const q = question(p, sk);
+    const g = board(sk, x, 4, { split: 2 });
+    sk.step(1);
+    paintCols(sk, g, 0, 2, TE);
+    eqRow(sk, X0, 206, `${x} + ${x} = ?`, 2 * x, { size: 46, color: TE });
+    sk.text(X0, 250, 'katla', { size: 27, color: TE });
+    sk.step(2);
+    paintCols(sk, g, 2, 4, CO);
+    note(sk, g, 'bir daha katla', CO);
+    eqRow(sk, X0, 320, `${2 * x} + ${2 * x} = ?`, 4 * x, { size: 50, color: CO, ring: true });
+    finish(sk, q, p.answer);
+    rule(sk, p, g, 374);
+  },
+
+  'carpim-3': (p, sk) => {
+    const x = nums(p.expr)[0];
+    const q = question(p, sk);
+    const g = board(sk, x, 3, { split: 2 });
+    sk.step(1);
+    paintCols(sk, g, 0, 2, TE);
+    eqRow(sk, X0, 206, `${x} + ${x} = ?`, 2 * x, { size: 46, color: TE });
+    sk.text(X0, 250, 'iki katı', { size: 27, color: TE });
+    sk.step(2);
+    paintCols(sk, g, 2, 3, CO);
+    note(sk, g, 'bir grup daha', CO);
+    eqRow(sk, X0, 320, `${2 * x} + ${x} = ?`, 3 * x, { size: 50, color: CO, ring: true });
+    finish(sk, q, p.answer);
+    rule(sk, p, g, 374);
+  },
+
+  'carpim-6': (p, sk) => {
+    const x = nums(p.expr)[0];
+    const q = question(p, sk);
+    const g = board(sk, x, 6, { split: 5 });
+    sk.step(1);
+    paintCols(sk, g, 0, 5, TE);
+    eqRow(sk, X0, 206, `${x} × 5 = ?`, 5 * x, { size: 46, color: TE });
+    sk.text(X0, 250, 'beşleri biliyorsun', { size: 27, color: TE });
+    sk.step(2);
+    paintCols(sk, g, 5, 6, CO);
+    note(sk, g, 'bir kere daha', CO);
+    eqRow(sk, X0, 320, `${5 * x} + ${x} = ?`, 6 * x, { size: 50, color: CO, ring: true });
+    finish(sk, q, p.answer);
+    rule(sk, p, g, 374);
+  },
+
+  'carpim-8': (p, sk) => {
+    const x = nums(p.expr)[0];
+    const q = question(p, sk);
+    const g = board(sk, x, 10, { split: 8 });
+    sk.step(1);
+    eqRow(sk, X0, 194, `${x} × 10 = ?`, 10 * x, { size: 44, color: TE });
+    sk.step(2);
+    // Fazla alınan iki sütun önce halkaya alınır, sonra (3. adımda) karalanıp geri verilir.
+    sk.ring(g.cx(9), g.y + g.H / 2, g.cell + 2, g.H / 2 + 8, { color: CO });
+    eqRow(sk, X0, 258, `${x} × 2 = ?`, 2 * x, { size: 44, color: CO });
+    sk.step(3);
+    paintCols(sk, g, 8, 10, CO);
+    note(sk, g, 'fazlayı geri ver', CO);
+    eqRow(sk, X0, 326, `${10 * x} − ${2 * x} = ?`, 8 * x, { size: 48, color: CO, ring: true });
+    finish(sk, q, p.answer);
+    rule(sk, p, g, 380);
+  },
+
+  'carpim-7': (p, sk) => {
+    const x = nums(p.expr)[0];
+    const q = question(p, sk);
+    const g = board(sk, x, 7, { split: 5 });
+    sk.step(1);
+    paintCols(sk, g, 0, 5, TE);
+    eqRow(sk, X0, 194, `${x} × 5 = ?`, 5 * x, { size: 44, color: TE });
+    sk.step(2);
+    paintCols(sk, g, 5, 7, CO);
+    eqRow(sk, X0, 258, `${x} × 2 = ?`, 2 * x, { size: 44, color: CO });
+    note(sk, g, '5 parça + 2 parça', CO);
+    sk.step(3);
+    eqRow(sk, X0, 326, `${5 * x} + ${2 * x} = ?`, 7 * x, { size: 48, color: CO, ring: true });
+    finish(sk, q, p.answer);
+    rule(sk, p, g, 380);
+  },
 };
 
 /** Ders oynatıcısında eskiz gösterilmeyecek püfler (cevabı ilk adımda ele veren). */

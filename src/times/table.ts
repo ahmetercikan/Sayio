@@ -161,7 +161,7 @@ export const timesTricks: Trick[] = LESSONS.map(({ f, idea }) => {
 });
 
 /** Bir ailenin kolay yoluyla, verilen diğer çarpan için soru kurar. */
-function buildFor(f: Family, x: number): Problem {
+export function buildFor(f: Family, x: number): Problem {
   const n = Number(f);
   const { steps, visual, hint } = LESSONS.find((l) => l.f === f)!.build(x, n);
   return { trickId: FAMILIES[f].trickId, expr: `${x} × ${n} = ?`, answer: x * n, steps, visual, hint };

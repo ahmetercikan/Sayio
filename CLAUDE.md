@@ -21,6 +21,9 @@
   stratejisi**: her çarpım 10 "aile"den birine düşer (`facts.ts`; aile = çarpanlardan kolay olanı),
   her ailenin bir dersi vardır (`table.ts`, normal ders akışını kullanır, `group: 'carpim'` ile püf
   listelerinden ayrılır). `problemFor(a,b)` bir çarpım için o ailenin kolay yolunu kurar.
+  Her ailenin kendi defter eskizi vardır (`src/sketch/recipes.ts`, `carpim-*`): sağa çarpımın
+  kutusu (dizi modeli) çizilir, kolay yol o kutunun üstünde gösterilir — turkuaz ilk parça,
+  mercan ikinci parça (eklenen ya da geri verilen), sarı çizgi kesme yeri.
   İlerleme Leitner aralıklı tekrarıyla tutulur (`mastery.ts`; kutu 0-5, kutu ≥4 "ezberledi"),
   profil verisinde `facts`. Süre tutulmaz (matematik kaygısı). Ekranlar: `pages/Times.tsx` (harita +
   aileler), `pages/TimesRound.tsx` (günün turu). Dayanak: Baroody 2006, Gray & Tall 1994,
@@ -28,7 +31,9 @@
 - **Ses (önemli):** yönergeler **doğal sesle** okunur (İrem, ElevenLabs). **Her cümle baştan sona tek
   parça üretilir** — cümleyi bölüp birleştirmeyi denedik, olmadı (rakamların sonu yutuluyor, cümle
   bütünlüğü bozuluyor). Kapsam: sabit yönergeler + ders fikirleri her yaş, sorular ve sözel problemler
-  4-7 yaş (anlatımın otomatik açık olduğu yer); kaydı olmayan cümle cihaz sesine düşer.
+  4-7 yaş, **çarpım tablosu bölümünün tamamı her yaş** (oralarda anlatım otomatik açık); kaydı
+  olmayan cümle cihaz sesine düşer. Bir adım ekranda **üç ayrı cümledir** (kutu dolu / kutu boş /
+  yönergeli soru) — üçünün de kaydı üretilir, yoksa biri cihaz sesine düşer.
   4-7 yaş sözel problemlerinde isim/nesne çeşidi bilerek dar (`word.ts` → `DAR_ISIM`, `DAR_NESNE`).
   Tuzaklar ve komutlar: **docs/ses.md** — özellikle `next_text` kullanma, rakamları yazıyla gönder.
   Yeni sesli cümleleri `src/lib/narration.ts` içine yaz ki üretim betiği bulsun.
