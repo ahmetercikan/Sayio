@@ -10,15 +10,16 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "ses:topla": "esbuild scripts/voice/collect.ts --bundle --platform=node --format=esm --outfile=node_modules/.cache/sayio-collect.mjs --log-level=error && node node_modules/.cache/sayio-collect.mjs",
-    "ses:sesler": "node scripts/voice/generate.mjs --voices",
-    "ses:ornek": "node scripts/voice/generate.mjs --sample 12",
-    "ses:uret": "node scripts/voice/generate.mjs",
+    "ses:sesler": "esbuild src/lib/voiceText.ts --bundle --platform=node --format=esm --outfile=node_modules/.cache/sayio-voicetext.mjs --log-level=error && node scripts/voice/generate.mjs --voices",
+    "ses:ornek": "esbuild src/lib/voiceText.ts --bundle --platform=node --format=esm --outfile=node_modules/.cache/sayio-voicetext.mjs --log-level=error && node scripts/voice/generate.mjs --sample 12",
+    "ses:uret": "esbuild src/lib/voiceText.ts --bundle --platform=node --format=esm --outfile=node_modules/.cache/sayio-voicetext.mjs --log-level=error && node scripts/voice/generate.mjs",
     "assets": "node scripts/make-assets.mjs && capacitor-assets generate --splashBackgroundColor #cfeee6 --splashBackgroundColorDark #123b36 --iconBackgroundColor #ff6b4a --iconBackgroundColorDark #ff6b4a",
     "ios": "npm run build && cap sync ios && cap open ios",
     "android": "npm run build && cap sync android && cap open android",
     "sync": "npm run build && cap sync",
     "ses:dene": "esbuild src/lib/voiceText.ts --bundle --platform=node --format=esm --outfile=node_modules/.cache/sayio-voicetext.mjs --log-level=error && node scripts/voice/demo.mjs",
-    "ses:temizle": "rm -rf public/voice"
+    "ses:temizle": "rm -rf public/voice",
+    "ses:sec": "esbuild src/lib/voiceText.ts --bundle --platform=node --format=esm --outfile=node_modules/.cache/sayio-voicetext.mjs --log-level=error && node scripts/voice/audition.mjs"
   },
   "dependencies": {
     "@capacitor-community/text-to-speech": "^8.0.2",

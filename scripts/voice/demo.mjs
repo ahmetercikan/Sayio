@@ -13,13 +13,11 @@ import { resolve } from 'node:path';
 const OUT = 'public/voice';
 const TMP = 'node_modules/.cache/sayio-voice-demo';
 const RATE = 22050;
-/** src/lib/voice.ts ile aynı değerler olmalı. */
-const SILENCE = 0.004;
-const PAD_IN = 0.012;
-const PAD_OUT = 0.03;
-const GAP = 0.025;
 
-const { splitForVoice, clipKey } = await import('../../node_modules/.cache/sayio-voicetext.mjs');
+const { splitForVoice, clipKey, clipBounds, TIMING } = await import('../../node_modules/.cache/sayio-voicetext.mjs');
+
+/** Değerler src/lib/voiceText.ts'ten gelir (uygulama ile birebir aynı olsun diye). */
+const { gap: GAP } = TIMING;
 
 const manifestPath = `${OUT}/manifest.json`;
 if (!existsSync(manifestPath)) {
@@ -50,12 +48,14 @@ function pcm(key) {
 
 /** src/lib/voice.ts'teki kırpmanın aynısı. */
 function trim(d) {
-  let s = 0;
-  let e = d.length - 1;
-  while (s < d.length && Math.abs(d[s]) < SILENCE) s++;
-  while (e > s && Math.abs(d[e]) < SILENCE) e--;
-  if (s >= e) return d;
-  return d.subarray(Math.max(0, s - RATE * PAD_IN) | 0, Math.min(d.length, e + RATE * PAD_OUT) | 0);
+  const { from, to } = clipBounds(d, RATE);
+  const cut = d.slice(Math.round(from * RATE), Math.round(to * RATE));
+  const f = Math.min(Math.round(TIMING.fade * RATE), Math.floor(cut.length / 4));
+  for (let i = 0; i < f; i++) {
+    cut[i] *= i / f;
+    cut[cut.length - 1 - i] *= i / f;
+  }
+  return cut;
 }
 
 const chunks = [];

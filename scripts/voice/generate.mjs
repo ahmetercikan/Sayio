@@ -12,6 +12,8 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync
 import { execFileSync } from 'node:child_process';
 import { resolve } from 'node:path';
 
+const { sayilariYaziyaCevir } = await import('../../node_modules/.cache/sayio-voicetext.mjs');
+
 const OUT = 'public/voice';
 const TMP = 'node_modules/.cache/sayio-voice';
 
@@ -28,7 +30,8 @@ for (const file of ['.env.local', '.env']) {
 const KEY = process.env.ELEVENLABS_API_KEY;
 // Rachel yerine Türkçe'de iyi çalışan çok dilli bir ses; `npm run ses:sesler` ile değiştirebilirsin.
 const VOICE = process.env.ELEVENLABS_VOICE_ID ?? 'XB0fDUnXU5powFXDhCwa';
-const MODEL = process.env.ELEVENLABS_MODEL_ID ?? 'eleven_multilingual_v2';
+// v4 Turbo: karakter başına yarım kredi harcar, kalitesi multilingual v2 ile aynı duyuldu.
+const MODEL = process.env.ELEVENLABS_MODEL_ID ?? 'eleven_v4_turbo';
 const FORMAT = process.env.ELEVENLABS_FORMAT ?? 'mp3_44100_64';
 const CONCURRENCY = Number(process.env.ELEVENLABS_CONCURRENCY ?? 3);
 const API = 'https://api.elevenlabs.io/v1';
@@ -88,26 +91,33 @@ const todo = (sampleCount ? clips.slice(0, sampleCount) : clips).filter((c) => !
 if (!todo.length) {
   console.log('Bütün sesler zaten üretilmiş.');
 } else {
-  const chars = todo.reduce((n, c) => n + c.text.length, 0);
+  const chars = Math.round(todo.reduce((n, c) => n + c.text.length, 0) / 2);
   console.log(
     local
       ? `${todo.length.toLocaleString('tr')} parça DENEME sesiyle üretilecek (macOS "say") — gerçek ses değil.`
-      : `${todo.length.toLocaleString('tr')} parça üretilecek (~${chars.toLocaleString('tr')} kredi), ses: ${VOICE}, model: ${MODEL}`,
+      : `${todo.length.toLocaleString('tr')} cümle üretilecek (~${chars.toLocaleString('tr')} kredi), ses: ${VOICE}, model: ${MODEL}`,
   );
 }
 
-/** Bir parçayı seslendirir. previous_text/next_text tonlamayı cümle içindeymiş gibi ayarlar. */
+/** Bir cümleyi baştan sona seslendirir. */
 async function synth(clip, attempt = 0) {
   const r = await fetch(`${API}/text-to-speech/${VOICE}?output_format=${FORMAT}`, {
     method: 'POST',
     headers: { 'xi-api-key': KEY, 'content-type': 'application/json', accept: 'audio/mpeg' },
     body: JSON.stringify({
-      text: clip.text,
+      // Rakamlar okunuşlarıyla gönderilir ("60" yerine "altmış"): rakam olarak gönderince
+      // model telaffuzu aceleye getirip başını/sonunu yutuyor. Ölçüldü, bkz. docs/ses.md.
+      text: sayilariYaziyaCevir(clip.text),
       model_id: MODEL,
-      previous_text: clip.before || undefined,
-      next_text: clip.after || undefined,
-      // Çocuklara anlatım: kararlı ve net, abartısız.
-      voice_settings: { stability: 0.55, similarity_boost: 0.8, style: 0.15, use_speaker_boost: true },
+      // Çocuklara anlatım: kararlı, net, biraz yayarak (hız 1'in altı = daha anlaşılır).
+      voice_settings: {
+        stability: 0.55,
+        similarity_boost: 0.8,
+        style: 0.15,
+        use_speaker_boost: true,
+        // 0.9: biraz yayarak, çocuğun takip edebileceği tempo (örneklerde seçilen ayar).
+        speed: Number(process.env.ELEVENLABS_SPEED ?? 0.9),
+      },
     }),
   });
   if (r.status === 429 || r.status >= 500) {
@@ -164,5 +174,5 @@ writeFileSync(
   `${OUT}/manifest.json`,
   JSON.stringify({ ext, source, voice: local ? 'macOS say' : VOICE, model: local ? '-' : MODEL, keys: files.map((f) => f.replace(`.${ext}`, '')).sort() }),
 );
-console.log(`\n✓ ${files.length.toLocaleString('tr')} ses dosyası hazır → ${OUT}/  (eksik: ${(clips.length - files.length).toLocaleString('tr')}${failed ? `, hatalı: ${failed}` : ''})`);
+console.log(`\n✓ ${files.length.toLocaleString('tr')} cümle hazır → ${OUT}/  (eksik: ${(clips.length - files.length).toLocaleString('tr')}${failed ? `, hatalı: ${failed}` : ''})`);
 if (sampleCount) console.log('  Dinlemek için:  open public/voice');

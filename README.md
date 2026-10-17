@@ -28,9 +28,9 @@ strateji öğrenen unuttuğunda yeniden bulur), **aralıklı hatırlama pratiği
 ve **süresiz pratik** (Boaler; Ramirez ve ark. — süreli test matematik kaygısını büyütür).
 
 ## Doğal ses
-Yönergeler telefonun robot sesiyle değil, önceden üretilmiş **doğal bir insan sesiyle** okunur.
-Sayılar her soruda değiştiği için cümleler "metin parçası + sayı" olarak bölünür ve çalarken
-birleştirilir — ~2.572 ses parçası bütün cümleleri karşılar, internet gerekmez.
+Yönergeler telefonun robot sesiyle değil, önceden üretilmiş **doğal bir insan sesiyle** okunur
+(İrem, Türkçe anadilli). Her cümle baştan sona tek parça kaydedilmiştir — 2.979 cümle, internet
+gerekmez. 4-7 yaşta (anlatımın otomatik açık olduğu yaş) kapsama %100.
 Kurulum ve komutlar: [docs/ses.md](docs/ses.md).
 
 ## Çalıştırma

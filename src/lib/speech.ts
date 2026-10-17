@@ -87,7 +87,20 @@ export function readable(t: string) {
     .replace(/\s*=\s*/g, ' eşittir ')
     .replace(/%(\d+)/g, 'yüzde $1')
     .replace(/(\d+)\/(\d+)/g, '$2 de $1')
-    .replace(/\?/g, ' kaç ');
+    // Soru işareti iki farklı şey olabilir:
+    //  - denklemdeki bilinmeyen kutu ("8 artı ? eşittir 13") → "kaç" diye okunur
+    //  - normal bir sorunun sonu ("Kaç kaldı?") → OKUNMAZ, yerinde kalır ki ses soru tonuyla söylesin
+    // Hepsini "kaç" yapmak "Kaç kaldı kaç" gibi anlamsız cümleler üretiyordu.
+    .replace(/\?/g, (_m, i: number, str: string) => {
+      const onu = str.slice(Math.max(0, i - 14), i);
+      const sonrasi = str.slice(i + 1, i + 15);
+      const op = /(artı|eksi|çarpı|bölü|eşittir)/;
+      return op.test(onu.trimEnd().split(/\s+/).pop() ?? '') || op.test(sonrasi.trimStart().split(/\s+/)[0] ?? '')
+        ? ' kaç '
+        : '?';
+    })
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 export function speak(text: string, opts: { rate?: number } = {}) {

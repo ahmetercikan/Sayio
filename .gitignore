@@ -9,6 +9,7 @@ dist
 .env.local
 .env
 voice/deneme.*
+voice/secim-*
 
 # NOT: public/voice/ (üretilen ses parçaları) BİLEREK git'e girer — web sürümü ve
 # GitHub Actions derlemesi de doğal sesi kullanabilsin diye. Dosya adları metnin

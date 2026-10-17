@@ -42,19 +42,33 @@ const NAMES: Name[] = [
   { n: 'Kerem', gen: 'Kerem\'in', dat: 'Kerem\'e' },
 ];
 
+/** Sıra önemli: küçüklerde yalnızca baştaki birkaçı kullanılır (bkz. DAR_NESNE). */
 const THINGS = [
-  { w: 'bilye', poss: 'bilyesi', e: '🔵' },
-  { w: 'çıkartma', poss: 'çıkartması', e: '⭐' },
-  { w: 'elma', poss: 'elması', e: '🍎' },
-  { w: 'kalem', poss: 'kalemi', e: '✏️' },
-  { w: 'kurabiye', poss: 'kurabiyesi', e: '🍪' },
   { w: 'balon', poss: 'balonu', e: '🎈' },
+  { w: 'kurabiye', poss: 'kurabiyesi', e: '🍪' },
+  { w: 'elma', poss: 'elması', e: '🍎' },
+  { w: 'çıkartma', poss: 'çıkartması', e: '⭐' },
+  { w: 'bilye', poss: 'bilyesi', e: '🔵' },
+  { w: 'kalem', poss: 'kalemi', e: '✏️' },
   { w: 'kitap', poss: 'kitabı', e: '📚' },
 ];
 
-const two = (): [Name, Name] => {
-  const [a, b] = shuffle(NAMES);
-  return [a, b];
+/**
+ * Küçüklerde (4-7 yaş) isim ve nesne çeşidi bilerek dar tutulur.
+ *
+ * Sebebi pedagojik değil, teknik: o yaşta sesli anlatım otomatik açık ve çocuk okuyamıyor, bu yüzden
+ * her cümlenin doğal sesi önceden üretiliyor (bkz. docs/ses.md). 10 isim × 7 nesne 16 binden fazla
+ * farklı cümle demek; 4 × 4 ile 2.500 cümleye iniyor ve hepsi tam cümle olarak seslendirilebiliyor.
+ * Matematik aynı: değişen tek şey cümledeki isim ve nesne. 8-14 yaş tam çeşitliliği görmeye devam eder.
+ */
+const DAR_ISIM = 3;
+const DAR_NESNE = 2;
+const dar = (b: Band) => b === 'minik' || b === 'kesif';
+
+const things = (b: Band) => (dar(b) ? THINGS.slice(0, DAR_NESNE) : THINGS);
+const two = (b: Band): [Name, Name] => {
+  const [x, y] = shuffle(dar(b) ? NAMES.slice(0, DAR_ISIM) : NAMES);
+  return [x, y];
 };
 
 const C1 = '#ff6b4a', C2 = '#14a89a', C3 = '#ffc83d';
@@ -105,8 +119,8 @@ function asks(right: string, wrongs: string[]) {
 
 // ---- Problem kalıpları ----
 function minikProblem(): WordProblem {
-  const t = pick(THINGS);
-  const [p] = two();
+  const t = pick(things('minik'));
+  const [p] = two('minik');
   if (Math.random() < 0.55) {
     const a = rnd(1, 5), b = rnd(1, 4);
     return {
@@ -134,8 +148,8 @@ function minikProblem(): WordProblem {
 }
 
 function kesifProblem(): WordProblem {
-  const t = pick(THINGS);
-  const [p, q] = two();
+  const t = pick(things('kesif'));
+  const [p, q] = two('kesif');
   const k = rnd(0, 2);
   if (k === 0) {
     const a = rnd(4, 9), b = rnd(3, 9);
@@ -177,7 +191,7 @@ function kesifProblem(): WordProblem {
 }
 
 function ustaProblem(): WordProblem {
-  const [p, q] = two();
+  const [p, q] = two('usta');
   const k = rnd(0, 4);
   if (k === 0) {
     const a = rnd(24, 68), b = rnd(19, 59);
@@ -249,7 +263,7 @@ function ustaProblem(): WordProblem {
 }
 
 function dahiProblem(): WordProblem {
-  const [p, q] = two();
+  const [p, q] = two('dahi');
   const k = rnd(0, 2);
   if (k === 0) {
     const m = rnd(2, 5), unit = rnd(6, 25), total = unit * (m + 1);

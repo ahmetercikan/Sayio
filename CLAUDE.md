@@ -25,12 +25,13 @@
   profil verisinde `facts`. Süre tutulmaz (matematik kaygısı). Ekranlar: `pages/Times.tsx` (harita +
   aileler), `pages/TimesRound.tsx` (günün turu). Dayanak: Baroody 2006, Gray & Tall 1994,
   Boaler "Fluency Without Fear", Roediger-Karpicke (hatırlama pratiği), Rohrer & Taylor (harmanlama).
-- **Ses (önemli):** yönergeler **doğal sesle** okunur. 59 bin cümle mümkün olduğu için her cümle
-  "sabit metin parçaları + sayılar" olarak bölünür (`src/lib/voiceText.ts` — bu kuralı üretim ve çalma
-  birlikte kullanır, değiştirirsen sesleri yeniden üretmek gerekir). ~2.572 parça ElevenLabs ile üretilip
-  `public/voice/` içine gömülür; `src/lib/voice.ts` kırpıp birleştirerek çalar. Parça eksikse cihazın
-  kendi sesine düşer. Komutlar ve hesap kurulumu: **docs/ses.md**. Yeni sesli cümleleri
-  `src/lib/narration.ts` içine yaz ki üretim betiği bulsun.
+- **Ses (önemli):** yönergeler **doğal sesle** okunur (İrem, ElevenLabs). **Her cümle baştan sona tek
+  parça üretilir** — cümleyi bölüp birleştirmeyi denedik, olmadı (rakamların sonu yutuluyor, cümle
+  bütünlüğü bozuluyor). Kapsam: sabit yönergeler + ders fikirleri her yaş, sorular ve sözel problemler
+  4-7 yaş (anlatımın otomatik açık olduğu yer); kaydı olmayan cümle cihaz sesine düşer.
+  4-7 yaş sözel problemlerinde isim/nesne çeşidi bilerek dar (`word.ts` → `DAR_ISIM`, `DAR_NESNE`).
+  Tuzaklar ve komutlar: **docs/ses.md** — özellikle `next_text` kullanma, rakamları yazıyla gönder.
+  Yeni sesli cümleleri `src/lib/narration.ts` içine yaz ki üretim betiği bulsun.
 - **Telefon/tablet uygulaması:** Capacitor 8 (`ios/`, `android/`). `npm run sync` web derlemesini iki
   platforma kopyalar; `npm run ios` / `npm run android` Xcode ve Android Studio'yu açar. Kabuk işleri
   (durum çubuğu, açılış görseli, Android geri tuşu, titreşim) `src/lib/native.ts`. Tablet ölçeği

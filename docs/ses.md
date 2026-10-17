@@ -1,112 +1,86 @@
 # Sayio'nun doğal sesi
 
-Sayio'nun yönergeleri artık telefonun robot sesiyle değil, **önceden üretilmiş doğal bir insan sesiyle**
-okunuyor. Bu belge sesin nasıl üretildiğini ve nasıl değiştirileceğini anlatır.
+Sayio'nun yönergeleri telefonun robot sesiyle değil, **önceden üretilmiş doğal bir insan sesiyle**
+okunuyor. Ses: **İrem** (ElevenLabs, Türkçe anadilli). Bütün kayıtlar uygulamanın içinde,
+**internet gerekmiyor**.
 
-## Neden parça parça?
+## En önemli kural: cümle bölünmez
 
-Uygulama 59 binden fazla farklı cümle söyleyebiliyor — çünkü her soruda sayılar değişiyor
-("8 artı 5 eşittir kaç", "13 artı 7 eşittir kaç"…). Bunların hepsini tek tek seslendirmek
-imkânsız (yüzlerce megabayt, binlerce dolar).
+İlk denemede cümleleri parçalara bölüp ("Deniz'in" + "12" + "balonu var") çalarken birleştirdik.
+**Çalışmadı.** Her parça ayrı bir konuşma olarak üretildiği için, araya ne kadar es konursa konsun
+cümle "cümle gibi" duyulmuyor; rakamların sonu yutuluyor, anlam bütünlüğü bozuluyor.
 
-Bunun yerine her cümle **sabit metin parçaları** ve **sayılar** olarak bölünüyor:
+Bu yüzden **her cümle baştan sona tek seferde üretilir**. `src/lib/voice.ts` yalnızca doğru dosyayı
+bulup çalar — kırpma, es ayarı, birleştirme yok. Kaydı olmayan bir cümle çıkarsa o cümle cihazın
+kendi sesiyle okunur (ses hiçbir zaman kesilmez).
+
+## Yol boyunca ölçülen üç şey
+
+Bunları tekrar denemeyin, hepsi ölçüldü:
+
+1. **`next_text` kullanmayın.** ElevenLabs'e "bundan sonra şu geliyor" bilgisini verince sesi yarıda
+   kesiyor: `"12"` klibi 0,86 sn yerine **0,26 sn** çıkıyordu.
+2. **Rakamları yazıyla gönderin.** `"60"` yerine `"altmış"` → telaffuz %17-30 daha dolgun.
+   Bunu `sayilariYaziyaCevir()` yapar; ekranda çocuk yine rakam görür.
+3. **Soru işareti iki farklı şeydir.** `8 + ? = 13` içindeki `?` "kaç" diye okunur; `Kaç kaldı?`
+   sonundaki `?` okunmaz, yerinde kalır ki ses soru tonunu versin. (Eskiden hepsi "kaç" okunuyor,
+   "Kaç kaldı kaç" gibi anlamsız cümleler çıkıyordu.)
+
+## Neyin sesi var?
+
+| İçerik | Kapsam | Neden |
+| --- | --- | --- |
+| Sabit yönergeler, ders fikirleri, övgüler | **Her yaş** | En çok duyulan cümleler, sayısı az |
+| Sorular ve sözel problemler | **4-7 yaş** | Anlatım orada otomatik açık, çocuk okuyamıyor |
+| 8-14 yaşın soruları | Yok | O yaşta anlatım otomatik açılmaz; çocuk ekrandan okur |
+
+Toplam **2.979 cümle**, ~94 MB. 4-7 yaş kapsaması **%100** (ölçüldü).
+
+### Küçüklerde çeşitlilik neden dar?
+
+`src/problems/word.ts` içindeki `DAR_ISIM` (3) ve `DAR_NESNE` (2): 4-7 yaş sözel problemlerinde
+3 isim (Ali, Ayşe, Can) ve 2 nesne (balon, kurabiye) kullanılır. Tam çeşitlilikte (10 isim × 7 nesne)
+16.000'den fazla farklı cümle çıkıyor ve hepsinin sesini üretmek 1,2 milyon kredi ediyor.
+**Matematik aynı** — değişen tek şey hikâyedeki isim ve nesne. 8-14 yaş tam çeşitliliği görür.
+
+Çeşitliliği artırmak istersen: bu iki sayıyı büyüt, `npm run ses:topla && npm run ses:uret` çalıştır
+(yalnızca yeni cümleler üretilir, eskilere ikinci kez para ödenmez). Kabaca maliyet:
+0,25 kredi/karakter. 3×3 → +18.000 kredi, +33 MB.
+
+## Kurulum
+
+`.env.local` (git'e girmez):
 
 ```
-"Deniz'in 12 balonu var. 5 tanesi uçtu. Kaç kaldı?"
- └ "Deniz'in" ┘ └12┘ └ "balonu var." ┘ └5┘ └ "tanesi uçtu. Kaç kaldı" ┘
+ELEVENLABS_API_KEY=sk_...
 ```
 
-Böylece **2.572 ses parçası** bütün cümleleri karşılıyor (~67 bin karakter, tek seferlik üretim).
-Uygulama bu parçaları çalarken baş/son sessizliklerini kırpıp saniyesi saniyesine birleştiriyor,
-kulağa tek bir cümle gibi geliyor. Parçalar cihazda olduğu için **internet gerekmiyor**.
+Varsayılanlar `scripts/voice/generate.mjs` içinde: ses `İrem`, model `eleven_v4_turbo`
+(karakter başına yarım kredi), hız `0.9`.
 
-Bir parça eksikse o cümle telefonun kendi sesiyle okunur — yani ses hiçbir zaman tamamen kesilmez.
+## Komutlar
 
-## 1. ElevenLabs hesabı aç
+| Komut | Ne yapar |
+| --- | --- |
+| `npm run ses:topla` | Söylenebilecek bütün cümleleri tarar → `voice/clips.json` |
+| `npm run ses:uret` | Eksik cümleleri üretir (yarıda kalırsa kaldığı yerden devam eder) |
+| `npm run ses:sesler` | Hesaptaki sesleri listeler |
+| `npm run ses:sec` | Aday sesleri gerçek Sayio cümleleriyle dinletir → `voice/secim-*.m4a` |
+| `npm run ses:temizle` | Üretilmiş bütün sesleri siler |
 
-1. <https://elevenlabs.io> → **Sign up** (Google hesabınla da olur).
-2. Üst menüden **Pricing** → **Creator** planını seç (aylık ~22 $, 100.000 kredi).
-   - Tüm sesleri üretmek **~67.000 kredi** harcar, yani tek ay yeter.
-   - **Önemli:** ücretsiz plan ticari kullanıma (mağazada uygulama) izin vermez; Creator verir.
-3. Sağ üstte profil resmi → **API Keys** → **Create API Key** → anahtarı kopyala.
-
-## 2. Anahtarı projeye koy
-
-Proje kökünde `.env.local` adında bir dosya aç (bu dosya git'e gitmez, kimse göremez):
-
-```
-ELEVENLABS_API_KEY=sk_buraya_kopyaladığın_anahtar
-```
-
-## 3. Sesi seç
-
-```bash
-npm run ses:sesler      # hesabındaki seslerin listesi ve ID'leri
-```
-
-Çocuk anlatımı için sıcak, net ve yavaş konuşan bir kadın sesi iyi sonuç verir.
-Beğendiğin sesin ID'sini `.env.local` dosyasına ekle:
-
-```
-ELEVENLABS_VOICE_ID=buraya_ses_id
-```
-
-Önce birkaç parça üretip dinle (ucuz, ~300 kredi):
-
-```bash
-npm run ses:ornek       # 12 parça üretir
-npm run ses:dene        # parçaları birleştirip voice/deneme.m4a yazar
-open voice/deneme.m4a   # dinle
-```
-
-Beğenmediysen `.env.local` içindeki ID'yi değiştir, `npm run ses:temizle` yapıp tekrar dene.
-
-## 4. Bütün sesleri üret
-
-```bash
-npm run ses:topla       # söylenebilecek bütün cümleleri tarar → voice/clips.json
-npm run ses:uret        # eksik parçaları ElevenLabs'e ürettirir (~20-30 dk)
-npm run sync            # sesleri iOS ve Android uygulamalarına kopyalar
-```
-
-`ses:uret` yarıda kalırsa tekrar çalıştır; kaldığı yerden devam eder, üretilmiş parçaya
-ikinci kez para ödemezsin.
-
-## Soruları/metinleri değiştirdiğinde
-
-Yeni bir püf noktası, yeni bir problem ya da yeni bir yönerge eklediğinde yeni parçalar gerekir:
+**Metin değiştirdiğinde** (yeni püf, yeni problem, yeni yönerge):
 
 ```bash
 npm run ses:topla && npm run ses:uret && npm run sync
 ```
 
-Sadece **yeni** parçalar üretilir. Sabit yönergeleri `src/lib/narration.ts` içine yazarsan
-betik onları da otomatik bulur.
+Yeni sesli cümleleri `src/lib/narration.ts` içine yazarsan betik onları da otomatik bulur.
 
-## Komutların özeti
+## Dosyalar
 
-| Komut | Ne yapar |
-| --- | --- |
-| `npm run ses:topla` | Söylenebilecek bütün cümleleri tarar, parça listesini çıkarır |
-| `npm run ses:sesler` | ElevenLabs hesabındaki sesleri listeler |
-| `npm run ses:ornek` | 12 parça üretir (deneme) |
-| `npm run ses:uret` | Eksik bütün parçaları üretir |
-| `npm run ses:dene "cümle"` | Parçaları birleştirip `voice/deneme.m4a` yazar (kulakla kontrol) |
-| `npm run ses:temizle` | Üretilmiş bütün sesleri siler (baştan üretmek için) |
-
-## Dosyalar nerede?
-
-- `public/voice/*.m4a` — ses parçaları (~2.572 dosya, uygulamaya gömülür)
-- `public/voice/manifest.json` — hangi parçaların hazır olduğu
-- `voice/clips.json` — üretilecek parçaların listesi (git'e girer, sesler girmez)
-- `src/lib/voiceText.ts` — cümleyi parçalara bölen kural (üretim ve çalma aynı kuralı kullanır)
-- `src/lib/voice.ts` — parçaları çalan katman
-- `src/lib/speech.ts` — doğal ses → cihaz sesi → tarayıcı sesi sıralaması
-
-## Anahtarsız deneme
-
-API anahtarın yokken düzeneği denemek için (ses yapay duyulur, sadece test amaçlı):
-
-```bash
-node scripts/voice/generate.mjs --local
-```
+- `public/voice/*.m4a` — cümlelerin sesi (dosya adı metnin özeti; aynı metin hep aynı dosya)
+- `public/voice/manifest.json` — hangi cümlelerin hazır olduğu
+- `voice/clips.json` — üretilecek cümle listesi (git'e girer)
+- `src/lib/voiceText.ts` — dosya adı üretimi + sayıları yazıya çevirme
+- `src/lib/voice.ts` — çalma katmanı
+- `src/lib/speech.ts` — doğal ses → cihaz sesi sıralaması
