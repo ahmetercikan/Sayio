@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { AvatarArt, AVATARS } from '../components/Avatars';
 import { Doodles } from '../components/Doodles';
 import { Mascot } from '../components/Mascot';
+import { ONBOARDING_LINES } from '../lib/narration';
 import { sfx } from '../lib/sfx';
 import { speak, unlockAudio } from '../lib/speech';
 import { useApp } from '../store/useApp';
@@ -17,14 +18,8 @@ import { bandInfo, bandOfAge } from '../tricks/types';
 
 type Step = 'splash' | 'avatar' | 'name' | 'age' | 'parent' | 'start';
 
-const LINES: Partial<Record<Step, string>> = {
-  splash: 'Merhaba! Ben Sayio. Matematiğin kolay yollarını birlikte keşfedeceğiz!',
-  avatar: 'Avatarını seç!',
-  name: 'Adın ne?',
-  age: 'Kaç yaşındasın?',
-  parent: 'Hadi bir büyüğünü çağır! Sayio\'yu birlikte kuralım.',
-  start: 'Hadi başlayalım!',
-};
+
+const LINES: Partial<Record<Step, string>> = ONBOARDING_LINES;
 
 const FLOAT = ['+', '−', '×', '÷', '=', '7', '3', '10'];
 

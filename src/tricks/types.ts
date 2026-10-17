@@ -67,6 +67,8 @@ export interface Trick {
   id: string;
   band: Band;
   op: Op;
+  /** 'carpim': çarpım tablosu bölümüne ait ders; püf noktası listelerinde görünmez. */
+  group?: 'carpim';
   title: string;
   emoji: string;
   /** Kartta görünen tek satırlık özet: "8+5 → 10+3". */

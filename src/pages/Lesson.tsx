@@ -17,6 +17,7 @@ import { BackButton, StepDots, Stars } from '../components/ui';
 import { BadgeHost } from '../components/AppShell';
 import { fmt, pick } from '../lib/util';
 import { sfx } from '../lib/sfx';
+import { PRAISE_DONE, PRAISE_PERFECT, PRAISE_PERFECT_EXTRA } from '../lib/narration';
 import { speak, stopSpeaking } from '../lib/speech';
 import { useApp, useProfile, useProfileData } from '../store/useApp';
 import { getTrick, nextTrick } from '../tricks';
@@ -87,7 +88,8 @@ function LessonFlow({ trick }: { trick: Trick }) {
     setPhase('done');
     sfx.fanfare();
     confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 }, colors: ['#ff6b4a', '#14a89a', '#ffc83d', '#3f7fe0'] });
-    if (settings.narration) speak(stars === 3 ? `Muhteşem! Üç yıldız! ${pick(['Kolay yolu çok iyi öğrendin.', 'Beynin kas gibi güçleniyor!'])}` : 'Harika çalıştın! Her denemede daha da güçleniyorsun.', { rate: settings.rate });
+    if (settings.narration)
+      speak(stars === 3 ? `${PRAISE_PERFECT} ${pick(PRAISE_PERFECT_EXTRA)}` : PRAISE_DONE, { rate: settings.rate });
   };
 
   const restart = () => {

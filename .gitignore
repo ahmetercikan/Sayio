@@ -4,3 +4,12 @@ dist
 .DS_Store
 .env*.local
 *.tsbuildinfo
+
+# Ses üretimi
+.env.local
+.env
+voice/deneme.*
+
+# NOT: public/voice/ (üretilen ses parçaları) BİLEREK git'e girer — web sürümü ve
+# GitHub Actions derlemesi de doğal sesi kullanabilsin diye. Dosya adları metnin
+# özetinden üretildiği için aynı sesle tekrar üretmek yeni dosya oluşturmaz.

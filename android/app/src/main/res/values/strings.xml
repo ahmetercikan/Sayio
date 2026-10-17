@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Sayio</string>
+    <string name="title_activity_main">Sayio</string>
+    <string name="package_name">com.ahmetercikan.sayio</string>
+    <string name="custom_url_scheme">com.ahmetercikan.sayio</string>
+</resources>

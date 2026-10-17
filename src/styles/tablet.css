@@ -1,0 +1,112 @@
+/* =====================================================================
+   Tablet ölçeği (iPad, Android tabletler)
+   ---------------------------------------------------------------------
+   Düzen telefondakiyle aynı kalır — çocuk aynı yerde aynı şeyi bulur —
+   ama yazılar, butonlar ve dokunma alanları ekrana göre orantılı büyür.
+   Yoksa 11-13 inçlik bir tablette her şey minicik görünür.
+
+   768px: 8-11" tabletler (iPad mini, iPad, çoğu Android tablet)
+   1100px: 12-13" tabletler ve yatay kullanım
+   ===================================================================== */
+
+@media (min-width: 768px) {
+  :root {
+    --tabbar-h: 92px;
+    --radius: 26px;
+    --radius-lg: 36px;
+  }
+
+  /* ---- Tipografi ---- */
+  body { font-size: 18px; }
+  .brand-title { font-size: clamp(76px, 9vw, 104px); }
+  .title-xl { font-size: clamp(38px, 4.6vw, 50px); }
+  .title-lg { font-size: clamp(28px, 3.4vw, 36px); }
+  .title-md { font-size: 24px; }
+  .sub { font-size: clamp(18px, 2.1vw, 21px); }
+  .card-title { font-size: 27px; }
+  .chip { font-size: 17px; padding: 6px 18px; }
+
+  /* ---- Kabuk ---- */
+  .appbar { padding: calc(var(--safe-top) + 16px) 34px 6px; gap: 14px; }
+  .appbar__brand { font-size: 34px; gap: 10px; }
+  .app__main { padding: 14px 40px calc(var(--safe-bottom) + var(--tabbar-h) + 48px); }
+
+  .tabbar { padding: 9px; border-radius: 30px; gap: 6px; }
+  .tabbar--2 { width: min(calc(100% - 48px), 440px); }
+  .tabbar--5 { width: min(calc(100% - 48px), 820px); }
+  .tabbar__item { padding: 11px 6px 9px; border-radius: 24px; gap: 4px; }
+  .tabbar--5 .tabbar__item { font-size: 17px; }
+  .tabbar__item svg { width: 30px; height: 30px; }
+
+  /* ---- Butonlar (dokunma alanı da büyür) ---- */
+  .pill { min-height: 72px; min-width: 240px; font-size: 25px; padding: 0 38px; border-radius: 24px; gap: 12px; }
+  .pill--big { min-height: 84px; font-size: 30px; padding: 0 48px; }
+  .pill--sm { min-height: 56px; font-size: 20px; padding: 0 26px; border-radius: 20px; }
+  .pill svg { width: 28px; height: 28px; }
+  .btn-dark { min-height: 68px; font-size: 22px; }
+  .round-btn { width: 64px; height: 64px; border-radius: 22px; }
+  .round-btn svg { width: 32px; height: 32px; }
+  .round-btn--soft { width: 56px; height: 56px; border-radius: 20px; }
+  .round-btn--soft svg { width: 26px; height: 26px; }
+
+  /* ---- Soru ekranı: cevap alanları parmak boyunda ---- */
+  .choices { width: min(100%, 720px); gap: 18px; }
+  .choice { min-height: 104px; font-size: clamp(38px, 5vw, 52px); }
+  .choice--wide { font-size: clamp(26px, 3.4vw, 36px); }
+  .numpad { width: min(100%, 460px); gap: 14px; }
+  .numpad__key { height: 76px; font-size: 34px; }
+  .frame-input { width: min(100%, 520px); }
+  .eq--xl { font-size: clamp(56px, 7vw, 82px); }
+  .eq--lg { font-size: clamp(44px, 5.4vw, 62px); }
+  .lesson__main > * { max-width: 900px; }
+
+  /* ---- Kartlar ---- */
+  .paper-card { padding: 26px; }
+  .trick-card__title { font-size: 22px; }
+  .trick-card__short { font-size: 16px; }
+  .problem-card__text { font-size: clamp(22px, 2.4vw, 26px); }
+  .toggle-row { padding: 18px 0; font-size: 19px; }
+}
+
+@media (min-width: 1100px) {
+  :root { --tabbar-h: 100px; }
+
+  body { font-size: 19px; }
+  .title-xl { font-size: clamp(44px, 4.2vw, 58px); }
+  .title-lg { font-size: clamp(32px, 3.2vw, 42px); }
+  .card-title { font-size: 30px; }
+
+  .app__main { padding: 18px 56px calc(var(--safe-bottom) + var(--tabbar-h) + 56px); }
+  .appbar { padding: calc(var(--safe-top) + 18px) 48px 6px; }
+
+  .pill { min-height: 78px; font-size: 27px; }
+  .pill--big { min-height: 92px; font-size: 33px; }
+  .numpad { width: min(100%, 520px); }
+  .numpad__key { height: 86px; font-size: 38px; }
+  .choice { min-height: 118px; }
+}
+
+/* Tablet yatay: ekran alçalır, cevap alanı ekrana sığsın (kaydırmadan). */
+@media (min-width: 768px) and (max-height: 900px) {
+  .numpad__key { height: 62px; font-size: 30px; }
+  .numpad { gap: 12px; }
+  .numpad__keys { gap: 12px; }
+  .choice { min-height: 86px; }
+  .pill--big { min-height: 72px; font-size: 26px; }
+}
+
+/* Çarpım tablosu tablette: harita ve kartlar büyür. */
+@media (min-width: 768px) {
+  .tabbar--6 { width: min(calc(100% - 48px), 900px); gap: 5px; }
+  .tabbar--6 .tabbar__item { font-size: 16px; }
+  .ct-map { min-width: 0; }
+  .ct-cell { font-size: clamp(13px, 1.6vw, 19px); border-radius: 10px; }
+  .ct-head, .ct-corner { font-size: clamp(15px, 1.8vw, 21px); }
+  .ct-map-card { padding: 20px 16px; }
+  .ct-cta__text b { font-size: 26px; }
+  .ct-cta__text small { font-size: 16px; }
+  .ct-family__text b { font-size: 22px; }
+  .ct-family__text small { font-size: 15px; }
+  .ct-legend { font-size: 15px; }
+  .ct-foot { font-size: 16px; max-width: 640px; }
+}

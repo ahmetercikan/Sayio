@@ -1,0 +1,23 @@
+<!-- Açılış görseli (her yöne kırpılabilir: önemli her şey ortadaki dairede). -->
+<svg xmlns="http://www.w3.org/2000/svg" width="2732" height="2732" viewBox="0 0 400 400">
+  <defs>
+    <linearGradient id="face" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffd457"/>
+      <stop offset="100%" stop-color="#ffc02b"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="400" fill="#123b36"/>
+  <circle cx="80" cy="70" r="110" fill="#ffc83d" opacity="0.16"/>
+  <circle cx="330" cy="330" r="120" fill="#ff6b4a" opacity="0.10"/>
+  <circle cx="340" cy="90" r="70" fill="#14a89a" opacity="0.10"/>
+  <g transform="translate(200 200) scale(1.25) translate(-60 -60)">
+    <rect x="0" y="0" width="120" height="120" rx="32" fill="#ff6b4a"/>
+    <g transform="translate(60 61) rotate(-3) translate(-60 -61)">
+      <rect x="23" y="24" width="74" height="74" rx="21" fill="url(#face)" stroke="#2b2250" stroke-width="5"/>
+      <circle cx="46.5" cy="55" r="6" fill="#2b2250"/>
+      <circle cx="73.5" cy="55" r="6" fill="#2b2250"/>
+      <path d="M46,71 Q60,83 74,71" stroke="#2b2250" stroke-width="5.4" fill="none" stroke-linecap="round"/>
+    </g>
+    <path d="M99,16 v15 M91.5,23.5 h15" stroke="#fff" stroke-width="5.2" stroke-linecap="round"/>
+  </g>
+</svg>

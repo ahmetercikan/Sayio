@@ -2,7 +2,7 @@
  * "Bugün": selam, seri ve seviye; günün antrenmanı; sıradaki püf noktası; işlem kartları;
  * problem çözme, şimşek tur ve rozetlere kısayollar. Çizio'nun "Bugün" ekranıyla aynı düzen.
  */
-import { Check, ChevronRight, Flame, Lightbulb, Play, Puzzle, Sparkles, Target, Trophy, Zap } from 'lucide-react';
+import { Check, ChevronRight, Flame, Grid3x3, Lightbulb, Play, Puzzle, Sparkles, Target, Trophy, Zap } from 'lucide-react';
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { AppShell, LevelBadge } from '../components/AppShell';
@@ -10,7 +10,9 @@ import { Mascot } from '../components/Mascot';
 import { Stars } from '../components/ui';
 import { sfx } from '../lib/sfx';
 import { dayKey, streakOf } from '../lib/util';
-import { useProfile, useProfileData, type ProfileData } from '../store/useApp';
+import { useFacts, useProfile, useProfileData, type ProfileData } from '../store/useApp';
+import { FACTS as ALL_FACTS, HARD_FACTS } from '../times/facts';
+import { progressOf } from '../times/mastery';
 import { tricks, tricksByBand } from '../tricks';
 import { BANDS, OPS, bandIndex, type Band, type Op, type Trick } from '../tricks/types';
 
@@ -49,6 +51,11 @@ export default function Home() {
   const data = useProfileData();
   const today = dayKey();
   const quest = !!data.days[today]?.quest;
+  const factMap = useFacts();
+  const times = useMemo(() => {
+    const p = progressOf(factMap);
+    return { ...p, total: ALL_FACTS.length, hardTotal: HARD_FACTS.length };
+  }, [factMap]);
   const next = useMemo(() => recommend(profile.band, data), [profile.band, data]);
   const fact = FACTS[(new Date().getDate() + new Date().getMonth()) % FACTS.length];
   const nextProg = data.tricks[next.id];
@@ -89,6 +96,18 @@ export default function Home() {
       </div>
 
       <section className="row-section" style={{ marginTop: 6 }}>
+        <h2 className="row-section__title"><Grid3x3 size={20} /> Çarpım tablosu</h2>
+        <Link to="/carpim" className="ct-home rise" onClick={() => sfx.pop()}>
+          <span className="ct-home__big"><b>{times.known}</b><small>/ {times.total}</small></span>
+          <span className="ct-home__text">
+            <b>{times.known === 0 ? 'Kolay yoldan başla' : times.due > 0 ? `${times.due} çarpımın tekrar zamanı` : 'Haritanı büyüt'}</b>
+            <small>{times.known === times.total ? 'Tablonun tamamı senin! 👑' : `Gerçekten zor olanlardan ${times.hardTotal - times.hardKnown} tane kaldı`}</small>
+          </span>
+          <span className="ct-home__bar"><i style={{ width: `${(times.known / times.total) * 100}%` }} /></span>
+        </Link>
+      </section>
+
+      <section className="row-section">
         <h2 className="row-section__title"><Sparkles size={20} /> Sıradaki püf noktası</h2>
         <Link to={`/ders/${next.id}`} className="world-card next-card rise" style={opVars(next.op)} onClick={() => sfx.pop()}>
           <div className="world-art next-card__art">

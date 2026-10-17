@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Uygulamanın nane zemini. Eski WebView sürümlerinde (140'tan önce) Capacitor, sistem
+         çubuklarının yerini boşluk bırakarak ayırır; o boşlukta pencere zemini görünür.
+         Beyaz kalmasın diye zemini uygulamanın rengine ayarlıyoruz. -->
+    <color name="sayio_bg">#cfeee6</color>
+</resources>

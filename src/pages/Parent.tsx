@@ -3,16 +3,78 @@
  * Ayarlar, profil (yaş → içerik grubu), ilerleme raporu ve uygulamanın pedagojik yaklaşımı.
  */
 import { Trash2 } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AvatarArt } from '../components/Avatars';
 import { Doodles } from '../components/Doodles';
 import { Numpad } from '../components/Inputs';
 import { Confirm, Stars, TopBar } from '../components/ui';
+import { narrationAvailable, openVoiceInstall } from '../lib/speech';
 import { rnd } from '../lib/util';
-import { useApp, useProfile, useProfileData } from '../store/useApp';
+import { naturalVoiceReady } from '../lib/voice';
+import { useApp, useFacts, useProfile, useProfileData } from '../store/useApp';
+import { FACTS, HARD_FACTS } from '../times/facts';
+import { MASTERED_BOX, progressOf } from '../times/mastery';
 import { tricksByBand } from '../tricks';
 import { BANDS, OPS, bandInfo, bandOfAge } from '../tricks/types';
+
+/** Çarpım tablosu raporu: kaç çarpım oturdu, hangileri hâlâ zorluyor. */
+function TimesReport() {
+  const map = useFacts();
+  const p = progressOf(map);
+  // En çok yanılınan 6 çarpım: ebeveyn nereye bakacağını bilsin.
+  const zor = Object.entries(map)
+    .filter(([, s]) => s.misses > 0 && s.box < MASTERED_BOX)
+    .sort((a, b) => b[1].misses - a[1].misses)
+    .slice(0, 6)
+    .map(([k]) => k.split('x').join(' × '));
+  return (
+    <div className="paper-card settings-card">
+      <h2 className="card-title">Çarpım tablosu</h2>
+      <div className="ct-report">
+        <span><b>{p.known}</b><small>ezberledi</small></span>
+        <span><b>{p.learning}</b><small>öğreniyor</small></span>
+        <span><b>{p.fresh}</b><small>tanışmadı</small></span>
+      </div>
+      <div className="ct-bar"><i style={{ width: `${(p.known / FACTS.length) * 100}%` }} /></div>
+      <p className="muted" style={{ fontSize: 15, marginTop: 12, fontWeight: 600, lineHeight: 1.5 }}>
+        {FACTS.length} çarpımın {p.known} tanesi oturdu. Gerçekten zor olan {HARD_FACTS.length} çarpımdan{' '}
+        {p.hardKnown} tanesi bitti.
+      </p>
+      {zor.length > 0 && (
+        <p className="muted" style={{ fontSize: 15, marginTop: 8, fontWeight: 600, lineHeight: 1.5 }}>
+          <b>Şu an zorlayanlar:</b> {zor.join(', ')}. Bunlar günün turunda sık sık karşısına çıkacak —
+          ezberletmeye çalışmayın, kolay yolu birlikte tekrarlayın.
+        </p>
+      )}
+    </div>
+  );
+}
+
+/** Hangi sesin kullanıldığını gösterir; cihazda Türkçe ses yoksa kurma düğmesi çıkarır. */
+function VoiceStatus() {
+  const [state, setState] = useState<'dogal' | 'cihaz' | 'yok' | null>(null);
+  useEffect(() => {
+    if (naturalVoiceReady()) return setState('dogal');
+    void narrationAvailable().then((ok) => setState(ok ? 'cihaz' : 'yok'));
+  }, []);
+  if (!state) return null;
+  const text = {
+    dogal: 'Doğal ses — uygulamaya gömülü kayıtlar, internet gerektirmez.',
+    cihaz: 'Cihazın kendi Türkçe sesi kullanılıyor.',
+    yok: 'Bu cihazda Türkçe ses yok. Sesli anlatım için Türkçe ses verisini kurman gerekiyor.',
+  }[state];
+  return (
+    <div className="toggle-row">
+      <span>Ses kaynağı<br /><small>{text}</small></span>
+      {state === 'yok' && (
+        <button className="pill pill--sm pill--yellow" onClick={() => void openVoiceInstall()}>
+          Türkçe sesi kur
+        </button>
+      )}
+    </div>
+  );
+}
 
 export default function Parent() {
   const [ok, setOk] = useState(false);
@@ -129,6 +191,8 @@ function ParentBody() {
         ))}
       </div>
 
+      <TimesReport />
+
       <div className="paper-card settings-card">
         <h2 className="card-title">Ayarlar</h2>
         <label className="toggle-row">
@@ -143,6 +207,7 @@ function ParentBody() {
           <span>Konuşma hızı</span>
           <input type="range" min={0.7} max={1.3} step={0.1} value={settings.rate} onChange={(e) => setSettings({ rate: Number(e.target.value) })} />
         </label>
+        <VoiceStatus />
       </div>
 
       <div className="paper-card settings-card pedagogy">

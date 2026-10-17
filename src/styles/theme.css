@@ -48,8 +48,9 @@
   --radius-lg: 30px;
   --shadow-card: 0 2px 0 rgba(58, 43, 39, 0.06), 0 12px 28px rgba(122, 72, 40, 0.14);
   --shadow-pop: 0 18px 50px rgba(122, 72, 40, 0.28);
-  --safe-top: env(safe-area-inset-top, 0px);
-  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  /* Güvenli alan: iOS'ta env(), Android'de Capacitor'ın yazdığı --safe-area-inset-* değişkenleri. */
+  --safe-top: var(--safe-area-inset-top, env(safe-area-inset-top, 0px));
+  --safe-bottom: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
   --tabbar-h: 78px;
   --display: 'Fredoka', 'Nunito', system-ui, sans-serif;
   --font: 'Nunito', system-ui, -apple-system, 'Segoe UI', sans-serif;

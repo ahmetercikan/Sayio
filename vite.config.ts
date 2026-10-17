@@ -25,7 +25,18 @@ export default defineConfig({
         scope: './',
         icons: [{ src: 'favicon.svg', sizes: 'any', type: 'image/svg+xml' }],
       },
-      workbox: { globPatterns: ['**/*.{js,css,html,svg,png,woff2}'] },
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
+        // Ses parçaları (~2.500 dosya) önden indirilmez; çalındıkça saklanır.
+        // Dosya adları metnin özeti olduğu için içerikleri hiç değişmez → süresiz saklanabilir.
+        runtimeCaching: [
+          {
+            urlPattern: ({ url }) => url.pathname.includes('/voice/'),
+            handler: 'CacheFirst',
+            options: { cacheName: 'sayio-ses', expiration: { maxEntries: 3000, maxAgeSeconds: 60 * 60 * 24 * 365 } },
+          },
+        ],
+      },
     }),
   ],
   test: { environment: 'node', exclude: ['**/node_modules/**', '**/dist/**'] },

@@ -2,17 +2,22 @@ import { rnd, pick } from '../lib/util';
 import { dahi, usta } from './older';
 import type { Band, Op, Problem, Trick } from './types';
 import { BANDS } from './types';
+import { timesTricks } from '../times/table';
 import { kesif, minik } from './young';
 
-export const tricks: Trick[] = [...minik, ...kesif, ...usta, ...dahi];
+/** Püf noktaları + çarpım tablosu dersleri. `getTrick` ikisini de bulur. */
+export const tricks: Trick[] = [...minik, ...kesif, ...usta, ...dahi, ...timesTricks];
+/** Yalnızca püf noktaları: çarpım tablosu dersleri kendi bölümünde listelenir. */
+const core = tricks.filter((t) => !t.group);
+
 export const getTrick = (id: string) => tricks.find((t) => t.id === id);
-export const tricksByBand = (b: Band) => tricks.filter((t) => t.band === b);
-export const tricksByOp = (op: Op, b?: Band) => tricks.filter((t) => t.op === op && (!b || t.band === b));
+export const tricksByBand = (b: Band) => core.filter((t) => t.band === b);
+export const tricksByOp = (op: Op, b?: Band) => core.filter((t) => t.op === op && (!b || t.band === b));
 
 /** Bir sonraki püf noktası (aynı yaş grubunda sırayla, sonra bir üst grup). */
 export function nextTrick(id: string): Trick | undefined {
-  const i = tricks.findIndex((t) => t.id === id);
-  return tricks[i + 1];
+  const i = core.findIndex((t) => t.id === id);
+  return i < 0 ? core[0] : core[i + 1];
 }
 
 /** Bandın ve bir alt bandın püfleri: tekrar ve pekiştirme için. */

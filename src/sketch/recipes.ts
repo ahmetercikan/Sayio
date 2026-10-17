@@ -4,6 +4,7 @@
  * adımlar alt alta el yazısıyla yazılır, son cevap halkaya alınır.
  */
 import { fmt } from '../lib/util';
+import { FAMILIES } from '../times/facts';
 import type { Problem } from '../tricks/types';
 import { BL, CO, G, GR, SK, SU, TE, textW, type Box, type Sketch } from './build';
 
@@ -647,6 +648,9 @@ const R: Record<string, Recipe> = {
     eqRow(sk, X0, 320, `${unit} × ${a} = ?`, unit * a, { size: 48, color: CO, ring: true });
     finish(sk, q, p.answer);
   },
+  // Çarpım tablosu dersleri: kolay yol zaten "adım adım yazılan iki satır"dır
+  // (8 × 5 → 8 × 10 = 80 → 80 ÷ 2 = 40), yani genel eskiz senaryosu birebir uygun.
+  ...Object.fromEntries(Object.values(FAMILIES).map((f) => [f.trickId, generic as Recipe])),
 };
 
 /** Ders oynatıcısında eskiz gösterilmeyecek püfler (cevabı ilk adımda ele veren). */

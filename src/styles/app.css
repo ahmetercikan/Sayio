@@ -548,3 +548,104 @@
 .intro__model-btn.on { background: var(--sun); box-shadow: 0 3px 0 var(--sun-dark); color: var(--ink); }
 .runner__notebook { margin: 6px 2px 2px; }
 .trick-card__note { font-family: var(--hand); font-weight: 700; font-size: 22px; line-height: 1.1; color: var(--ink); padding: 8px 10px 6px 14px; margin-top: 4px; border-radius: 4px; background: repeating-linear-gradient(#fffdf6 0 24px, #cfe2ef 24px 25.5px); border-left: 2px solid #f2b3ab; box-shadow: 0 2px 6px rgba(122, 72, 40, 0.12); transform: rotate(-1deg); }
+
+/* =====================================================================
+   Çarpım tablosu bölümü
+   ===================================================================== */
+
+.tabbar--6 { width: min(calc(100% - 16px), 720px); gap: 2px; padding: 6px; }
+.tabbar--6 .tabbar__item { font-size: 12px; padding: 7px 2px 5px; }
+@media (max-width: 420px) { .tabbar--6 .tabbar__item span { font-size: 10px; } }
+@media (max-width: 360px) { .tabbar--6 .tabbar__item svg { width: 21px; height: 21px; } }
+
+/* ---------- İlerleme kartı ---------- */
+.ct-progress { display: grid; gap: 10px; }
+.ct-progress__big { display: flex; align-items: baseline; gap: 8px; font-family: var(--display); }
+.ct-progress__big b { font-size: clamp(38px, 9vw, 52px); font-weight: 700; color: var(--teal-dark); line-height: 1; }
+.ct-progress__big span { font-size: 17px; font-weight: 600; color: var(--muted); }
+.ct-progress__note { font-weight: 700; color: var(--ink-2); font-size: 15px; line-height: 1.45; }
+.ct-bar { height: 14px; border-radius: 999px; background: var(--teal-soft); overflow: hidden; box-shadow: inset 0 2px 0 rgba(58, 43, 39, 0.06); }
+.ct-bar i { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--teal), var(--green)); transition: width 0.6s cubic-bezier(0.2, 1, 0.3, 1); }
+
+/* ---------- Günün turu düğmesi ---------- */
+.ct-cta {
+  display: flex; align-items: center; gap: 14px; margin: 16px 0 6px; padding: 16px 18px;
+  border-radius: var(--radius); background: var(--teal); color: #fff; text-decoration: none;
+  box-shadow: 0 5px 0 var(--teal-dark), 0 12px 26px rgba(20, 168, 154, 0.3);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+.ct-cta:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--teal-dark); }
+.ct-cta__icon { flex: none; width: 52px; height: 52px; border-radius: 18px; background: rgba(255, 255, 255, 0.22); display: grid; place-items: center; }
+.ct-cta__text { flex: 1; display: grid; gap: 2px; min-width: 0; }
+.ct-cta__text b { font-family: var(--display); font-weight: 700; font-size: 22px; }
+.ct-cta__text small { font-weight: 700; opacity: 0.9; font-size: 14px; }
+
+/* ---------- Harita ---------- */
+.ct-map-card { padding: 14px 10px; overflow-x: auto; }
+.ct-map { display: grid; gap: 3px; min-width: 300px; }
+.ct-row { display: grid; grid-template-columns: repeat(11, 1fr); gap: 3px; }
+.ct-head, .ct-corner {
+  display: grid; place-items: center; font-family: var(--display); font-weight: 700;
+  font-size: clamp(11px, 2.4vw, 15px); color: var(--muted);
+}
+.ct-corner { color: var(--coral); }
+.ct-section { margin: 26px 0 12px; }
+
+.ct-cell {
+  display: grid; place-items: center; aspect-ratio: 1; border-radius: 7px;
+  background: var(--cream-2); color: rgba(58, 43, 39, 0.4);
+  font-family: var(--display); font-weight: 700; font-size: clamp(9px, 2.1vw, 13px);
+  transition: background 0.3s, color 0.3s;
+}
+.ct-cell--seen { background: var(--sun-soft); color: var(--sun-dark); }
+.ct-cell--learning { background: var(--sun); color: #fff; }
+.ct-cell--known { background: var(--green); color: #fff; }
+.ct-cell--square { box-shadow: inset 0 0 0 2px rgba(58, 43, 39, 0.22); }
+.ct-legend { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin-top: 12px; font-weight: 700; font-size: 13px; color: var(--muted); }
+.ct-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.ct-dot { width: 14px; height: 14px; border-radius: 5px; background: var(--cream-2); }
+.ct-dot--learning { background: var(--sun); }
+.ct-dot--known { background: var(--green); }
+
+/* ---------- Aile kartları ---------- */
+.ct-families { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+.ct-family {
+  position: relative; display: flex; align-items: center; gap: 14px; padding: 14px;
+  border-radius: var(--radius); background: #fff; border: 3px solid var(--world-soft);
+  box-shadow: 0 4px 0 var(--world-soft), var(--shadow-card);
+  color: var(--ink); text-decoration: none; transition: transform 0.15s;
+}
+.ct-family:active { transform: translateY(2px); }
+.ct-family__emoji { flex: none; width: 54px; height: 54px; border-radius: 18px; display: grid; place-items: center; background: var(--world-soft); font-size: 30px; }
+.ct-family__text { flex: 1; display: grid; gap: 2px; min-width: 0; }
+.ct-family__text b { font-family: var(--display); font-weight: 700; font-size: 19px; color: var(--world-dark); }
+.ct-family__text small { font-weight: 700; color: var(--ink-2); font-size: 13px; }
+.ct-family__count {
+  flex: none; min-width: 48px; height: 36px; padding: 0 10px; border-radius: 14px;
+  display: grid; place-items: center; background: var(--world-soft); color: var(--world-dark);
+  font-family: var(--display); font-weight: 700; font-size: 15px;
+}
+.ct-foot { margin-top: 18px; font-size: 14px; font-weight: 700; max-width: 520px; margin-left: auto; margin-right: auto; }
+
+/* Ana sayfadaki çarpım tablosu kartı */
+.ct-home {
+  display: grid; grid-template-columns: auto 1fr; gap: 4px 16px; align-items: center;
+  padding: 16px 18px; border-radius: var(--radius); background: #fff; text-decoration: none; color: var(--ink);
+  border: 3px solid var(--teal-soft); box-shadow: 0 4px 0 var(--teal-soft), var(--shadow-card);
+  transition: transform 0.15s;
+}
+.ct-home:active { transform: translateY(2px); }
+.ct-home__big { display: flex; align-items: baseline; gap: 4px; font-family: var(--display); }
+.ct-home__big b { font-size: 40px; font-weight: 700; color: var(--teal-dark); line-height: 1; }
+.ct-home__big small { font-size: 15px; font-weight: 600; color: var(--muted); }
+.ct-home__text { display: grid; gap: 2px; min-width: 0; }
+.ct-home__text b { font-family: var(--display); font-weight: 700; font-size: 19px; }
+.ct-home__text small { font-weight: 700; color: var(--muted); font-size: 13px; }
+.ct-home__bar { grid-column: 1 / -1; height: 10px; margin-top: 8px; border-radius: 999px; background: var(--teal-soft); overflow: hidden; }
+.ct-home__bar i { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--teal), var(--green)); transition: width 0.6s; }
+
+/* Ebeveyn raporundaki çarpım özeti */
+.ct-report { display: flex; gap: 10px; margin-bottom: 12px; }
+.ct-report span { flex: 1; display: grid; gap: 2px; justify-items: center; padding: 12px 6px; border-radius: 18px; background: var(--cream); }
+.ct-report b { font-family: var(--display); font-weight: 700; font-size: 28px; color: var(--teal-dark); line-height: 1; }
+.ct-report small { font-weight: 700; color: var(--muted); font-size: 13px; }

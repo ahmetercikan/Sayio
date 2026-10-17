@@ -1,4 +1,4 @@
-import { Award, Gamepad2, Lightbulb, Puzzle, Settings, Sun } from 'lucide-react';
+import { Award, Gamepad2, Grid3x3, Lightbulb, Puzzle, Settings, Sun } from 'lucide-react';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { sfx } from '../lib/sfx';
@@ -10,8 +10,9 @@ import { Modal } from './ui';
 
 const TABS = [
   { to: '/', label: 'Bugün', Icon: Sun },
+  { to: '/carpim', label: 'Çarpım', Icon: Grid3x3 },
   { to: '/puflar', label: 'Püfler', Icon: Lightbulb },
-  { to: '/problemler', label: 'Problemler', Icon: Puzzle },
+  { to: '/problemler', label: 'Problem', Icon: Puzzle },
   { to: '/oyunlar', label: 'Oyunlar', Icon: Gamepad2 },
   { to: '/rozetler', label: 'Rozetler', Icon: Award },
 ];

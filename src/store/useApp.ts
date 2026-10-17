@@ -4,8 +4,10 @@
  */
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { bandOfAge, type Band } from '../tricks/types';
 import { dayKey } from '../lib/util';
+import { HARD_FACTS } from '../times/facts';
+import { MASTERED_BOX, nextState, type FactMap } from '../times/mastery';
+import { bandOfAge, type Band } from '../tricks/types';
 
 export interface Profile {
   id: string;
@@ -32,6 +34,8 @@ export interface DayLog {
 
 export interface ProfileData {
   stars: number;
+  /** Çarpım tablosu: her çarpımın aralıklı tekrar durumu (bkz. src/times/mastery.ts). */
+  facts: FactMap;
   tricks: Record<string, TrickProgress>;
   days: Record<string, DayLog>;
   records: Record<string, number>;
@@ -65,10 +69,12 @@ interface State {
   setRecord: (game: string, v: number, lowerIsBetter?: boolean) => boolean;
   markQuest: () => void;
   markWord: () => void;
+  /** Çarpım tablosunda bir çarpım cevaplandı. */
+  answerFact: (a: number, b: number, correct: boolean) => void;
   consumeBadges: () => void;
 }
 
-export const emptyData = (): ProfileData => ({ stars: 0, tricks: {}, days: {}, records: {}, badges: [], newBadges: [], solved: 0, words: 0 });
+export const emptyData = (): ProfileData => ({ stars: 0, facts: {}, tricks: {}, days: {}, records: {}, badges: [], newBadges: [], solved: 0, words: 0 });
 
 /** Rozet koşulları (her güncellemede kontrol edilir). */
 export const BADGES: { id: string; emoji: string; title: string; desc: string; test: (d: ProfileData) => boolean }[] = [
@@ -84,7 +90,15 @@ export const BADGES: { id: string; emoji: string; title: string; desc: string; t
   { id: 'seri-7', emoji: '🏆', title: 'Haftalık Kahraman', desc: '7 gün üst üste çalış', test: (d) => streak(d.days) >= 7 },
   { id: 'simsek', emoji: '⚡', title: 'Şimşek', desc: 'Şimşek Tur\'da 15 doğru', test: (d) => (d.records.simsek ?? 0) >= 15 },
   { id: 'yuz-yildiz', emoji: '🌟', title: 'Yıldız Toplayıcı', desc: '100 yıldız biriktir', test: (d) => d.stars >= 100 },
+  // Çarpım tablosu
+  { id: 'carpim-10', emoji: '✖️', title: 'Çarpım Çırağı', desc: '10 çarpımı ezberle', test: (d) => mastered(d) >= 10 },
+  { id: 'carpim-yari', emoji: '🗺️', title: 'Yarı Yol', desc: 'Çarpım tablosunun yarısını bitir', test: (d) => mastered(d) >= 28 },
+  { id: 'carpim-zor', emoji: '💪', title: 'Zorları Yendim', desc: 'En zor 21 çarpımı ezberle', test: (d) => HARD_FACTS.every((f) => (d.facts?.[f.key]?.box ?? 0) >= MASTERED_BOX) },
+  { id: 'carpim-tam', emoji: '👑', title: 'Çarpım Kralı', desc: 'Çarpım tablosunun tamamını bitir', test: (d) => mastered(d) >= 55 },
 ];
+
+/** Ezberlenmiş çarpım sayısı. */
+const mastered = (d: ProfileData) => Object.values(d.facts ?? {}).filter((f) => f.box >= MASTERED_BOX).length;
 
 function streak(days: Record<string, unknown>) {
   const d = new Date();
@@ -167,6 +181,12 @@ export const useApp = create<State>()(
         },
         markQuest: () => mutate((d) => ({ ...d, days: { ...d.days, [dayKey()]: { ...today(d), quest: true } } })),
         markWord: () => mutate((d) => ({ ...d, words: d.words + 1, days: { ...d.days, [dayKey()]: today(d) } })),
+        answerFact: (a, b, correct) =>
+          mutate((d) => {
+            const key = `${Math.min(a, b)}x${Math.max(a, b)}`;
+            const facts = d.facts ?? {};
+            return { ...d, facts: { ...facts, [key]: nextState(facts[key], correct) } };
+          }),
         consumeBadges: () => mutate((d) => ({ ...d, newBadges: [] })),
       };
     },
@@ -181,6 +201,12 @@ export function useProfile(): Profile | undefined {
 const EMPTY = emptyData();
 export function useProfileData(): ProfileData {
   return useApp((s) => (s.activeId ? s.data[s.activeId] : undefined)) ?? EMPTY;
+}
+
+/** Çarpım tablosu durumu. Eski kayıtlarda bu alan yok, boş harita döner. */
+const NO_FACTS: FactMap = {};
+export function useFacts(): FactMap {
+  return useApp((s) => (s.activeId ? s.data[s.activeId]?.facts : undefined)) ?? NO_FACTS;
 }
 
 /** Seviye: toplam yıldıza göre isim ve ilerleme. */

@@ -11,6 +11,7 @@
 import { Eye, EyeOff, Lightbulb, Footprints, Volume2, ArrowRight, Check } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { makeChoices, nudge, pick, PRAISE, fmt } from '../lib/util';
+import { ASK_OLDER, ASK_YOUNG } from '../lib/narration';
 import { sfx } from '../lib/sfx';
 import { speak } from '../lib/speech';
 import { useApp } from '../store/useApp';
@@ -57,7 +58,7 @@ export function ProblemRunner({ problem, band, mode, onDone, autoSpeak }: {
 
   const target: Step = guided
     ? problem.steps[stepIdx]
-    : { say: problem.ask ?? (young ? 'Kolay yolu düşün!' : 'Kolay yolu düşün ve cevapla!'), eq: problem.expr, answer: problem.answer, choices: problem.choices };
+    : { say: problem.ask ?? (young ? ASK_YOUNG : ASK_OLDER), eq: problem.expr, answer: problem.answer, choices: problem.choices };
 
   const choices = useMemo(
     () => target.choices ?? (young ? makeChoices(target.answer, band === 'minik' ? 3 : 4, !!problem.negative) : undefined),

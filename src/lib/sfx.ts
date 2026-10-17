@@ -5,6 +5,8 @@
  * konvolüsyon). Tonlar FM sentezi: marimba (yumuşak, tahta) ve çan (parlak, uzun). Seçim sesleri
  * pentatonik gamda sırayla ilerler; art arda seçim yapmak kulağa bir melodi gibi gelir.
  */
+import { haptics } from './native';
+
 let ctx: AudioContext | null = null;
 let master: GainNode | null = null;
 let reverb: GainNode | null = null;
@@ -13,6 +15,13 @@ let enabled = true;
 export function setSfxEnabled(v: boolean) {
   enabled = v;
 }
+
+/** Dokunma titreşimi — ses efektleriyle aynı anahtara bağlı (kapalıysa cihaz da titremez). */
+const buzz = {
+  light: () => enabled && haptics.light(),
+  success: () => enabled && haptics.success(),
+  warning: () => enabled && haptics.warning(),
+};
 
 function ac(): AudioContext | null {
   if (!enabled) return null;
@@ -143,28 +152,35 @@ const nextNote = () => {
 export const sfx = {
   /** Genel dokunuş / seçim: yumuşak marimba notası + tahta tık. */
   tap: () => {
+    buzz.light();
     const f = nextNote();
     noise(0, 0.012, 0.05, 3200, 3200, 0.8);
     fm(f / 2, 0, 0.22, 0.16, 4, 1.4, 0.4);
   },
   /** Kabarcık "pop"u (buton, kart açma). */
   pop: () => {
+    buzz.light();
     bubble(0, 380, 1100, 0.2);
     fm(1568, 0.05, 0.35, 0.06, 3.5, 1.5, 1);
   },
   /** Numpad tuşu: kısa tahta tık. */
   key: () => {
+    buzz.light();
     noise(0, 0.01, 0.06, 2400, 2400, 1);
     fm(523.25, 0, 0.08, 0.08, 4, 0.9, 0.1);
   },
   /** Doğru adım: iki notalık parlak çan. */
   right: () => {
+    buzz.success();
     const f = nextNote();
     fm(f, 0, 0.5, 0.11, 3.5, 2, 1);
     fm(f * 1.5, 0.08, 0.6, 0.08, 3.5, 2, 1);
   },
   /** Yanlış: yumuşak, cezalandırmayan iki alçak nota. */
-  soft: () => [659.3, 523.25].forEach((f, i) => fm(f, i * 0.12, 0.35, 0.11, 4, 1.2, 0.5)),
+  soft: () => {
+    buzz.warning();
+    [659.3, 523.25].forEach((f, i) => fm(f, i * 0.12, 0.35, 0.11, 4, 1.2, 0.5));
+  },
   star: (i = 0) => fm(1318.5 * 2 ** (i / 6), 0, 0.7, 0.14, 3.5, 2.2, 1),
   success: () => [1046.5, 1318.5, 1568, 2093].forEach((f, i) => fm(f, i * 0.08, 0.7, 0.12, 3.5, 2, 1)),
   fanfare: () =>

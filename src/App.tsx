@@ -11,6 +11,8 @@ import Parent from './pages/Parent';
 import Practice from './pages/Practice';
 import Problems from './pages/Problems';
 import Profiles from './pages/Profiles';
+import Times from './pages/Times';
+import TimesRound from './pages/TimesRound';
 import Tricks from './pages/Tricks';
 import { BondsGame, EstimateGame, SprintGame } from './games/Games';
 import { useApp } from './store/useApp';
@@ -40,6 +42,8 @@ export default function App() {
         <Route path="/hosgeldin" element={<Onboarding />} />
         <Route path="/profiller" element={<Profiles />} />
         <Route path="/" element={P(<Home />)} />
+        <Route path="/carpim" element={P(<Times />)} />
+        <Route path="/carpim/tur" element={P(<TimesRound />)} />
         <Route path="/puflar" element={P(<Tricks />)} />
         <Route path="/ders/:id" element={P(<Lesson />)} />
         <Route path="/antrenman" element={P(<Practice />)} />

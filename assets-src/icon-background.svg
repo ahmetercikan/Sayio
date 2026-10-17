@@ -1,0 +1,11 @@
+<!-- Android uyarlanabilir simge: arka plan (düz mercan). -->
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 120 120">
+  <defs>
+    <radialGradient id="bg" cx="30%" cy="22%" r="95%">
+      <stop offset="0%" stop-color="#ff8a62"/>
+      <stop offset="60%" stop-color="#ff6b4a"/>
+      <stop offset="100%" stop-color="#e8502e"/>
+    </radialGradient>
+  </defs>
+  <rect width="120" height="120" fill="url(#bg)"/>
+</svg>

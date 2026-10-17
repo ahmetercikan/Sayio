@@ -17,6 +17,25 @@
     (adım k = iskele adımı k; tanınmayan varyant genel eskize düşer), `Notebook.tsx` kalemle çizme animasyonu.
   - `src/components/ProblemRunner.tsx`: iskeleli soru çözücü, CPA "göz" anahtarı, nazik geri bildirim.
   - `src/styles/shell.css`: Çizio'dan birebir alınan ortak stiller; `src/styles/app.css`: Sayio'ya özel.
+- **Çarpım tablosu (`src/times/`, `/carpim`):** uygulamanın ikinci ana amacı. Ezber değil **türetme
+  stratejisi**: her çarpım 10 "aile"den birine düşer (`facts.ts`; aile = çarpanlardan kolay olanı),
+  her ailenin bir dersi vardır (`table.ts`, normal ders akışını kullanır, `group: 'carpim'` ile püf
+  listelerinden ayrılır). `problemFor(a,b)` bir çarpım için o ailenin kolay yolunu kurar.
+  İlerleme Leitner aralıklı tekrarıyla tutulur (`mastery.ts`; kutu 0-5, kutu ≥4 "ezberledi"),
+  profil verisinde `facts`. Süre tutulmaz (matematik kaygısı). Ekranlar: `pages/Times.tsx` (harita +
+  aileler), `pages/TimesRound.tsx` (günün turu). Dayanak: Baroody 2006, Gray & Tall 1994,
+  Boaler "Fluency Without Fear", Roediger-Karpicke (hatırlama pratiği), Rohrer & Taylor (harmanlama).
+- **Ses (önemli):** yönergeler **doğal sesle** okunur. 59 bin cümle mümkün olduğu için her cümle
+  "sabit metin parçaları + sayılar" olarak bölünür (`src/lib/voiceText.ts` — bu kuralı üretim ve çalma
+  birlikte kullanır, değiştirirsen sesleri yeniden üretmek gerekir). ~2.572 parça ElevenLabs ile üretilip
+  `public/voice/` içine gömülür; `src/lib/voice.ts` kırpıp birleştirerek çalar. Parça eksikse cihazın
+  kendi sesine düşer. Komutlar ve hesap kurulumu: **docs/ses.md**. Yeni sesli cümleleri
+  `src/lib/narration.ts` içine yaz ki üretim betiği bulsun.
+- **Telefon/tablet uygulaması:** Capacitor 8 (`ios/`, `android/`). `npm run sync` web derlemesini iki
+  platforma kopyalar; `npm run ios` / `npm run android` Xcode ve Android Studio'yu açar. Kabuk işleri
+  (durum çubuğu, açılış görseli, Android geri tuşu, titreşim) `src/lib/native.ts`. Tablet ölçeği
+  `src/styles/tablet.css`. Simge/açılış görselleri `assets-src/*.svg` → `npm run assets`.
+  Ayrıntı: **docs/yayin.md**.
 - **Yayın:** `main`'e gönderilince GitHub Actions test + derleme yapıp GitHub Pages'e yayınlar (https://ahmetercikan.github.io/Sayio/). Commit mesajları Türkçe.
 - **Türkçe ekler:** sayılara ek getirme (8'i, 6'yı…); cümleleri "… sayısı" kalıbıyla kur. Üleştirme için `distrib()`.
 - **Pedagoji ilkesi:** yanlışta asla "yanlış, doğrusu X" deme; `nudge()` ile yönlendir, görseli aç, adımlara geç.
