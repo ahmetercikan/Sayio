@@ -21,7 +21,8 @@
     "ses:temizle": "rm -rf public/voice",
     "ses:sec": "esbuild src/lib/voiceText.ts --bundle --platform=node --format=esm --outfile=node_modules/.cache/sayio-voicetext.mjs --log-level=error && node scripts/voice/audition.mjs",
     "magaza:ekran": "tsx scripts/store-shots.mts",
-    "magaza:gorsel": "tsx scripts/store-promo.mts"
+    "magaza:gorsel": "tsx scripts/store-promo.mts",
+    "yatay:kontrol": "tsx scripts/landscape-check.mts"
   },
   "dependencies": {
     "@capacitor-community/text-to-speech": "^8.0.2",

@@ -18,3 +18,4 @@ voice/secim-*
 # Mağaza görselleri üretilir (store/README.md), git'e girmez: ~70 MB.
 store/screenshots/
 store/promo/
+store/yatay/

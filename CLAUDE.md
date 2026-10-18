@@ -16,7 +16,10 @@
   - `src/sketch/`: "kolay yol defteri" — kalem eskizi. `build.ts` el çizimi geometri, `recipes.ts` her püf için eskiz senaryosu
     (adım k = iskele adımı k; tanınmayan varyant genel eskize düşer), `Notebook.tsx` kalemle çizme animasyonu.
   - `src/components/ProblemRunner.tsx`: iskeleli soru çözücü, CPA "göz" anahtarı, nazik geri bildirim.
-  - `src/styles/shell.css`: Çizio'dan birebir alınan ortak stiller; `src/styles/app.css`: Sayio'ya özel.
+  - `src/styles/shell.css`: Çizio'dan birebir alınan ortak stiller; `src/styles/app.css`: Sayio'ya özel;
+    `src/styles/tablet.css`: tablet ölçeği **ve yatay düzen**. Yatayda ders ekranı ikiye bölünür
+    (solda defter/model ve soru, sağda tuş takımı) — yoksa tuşlar ekranın altında kalıp görünmüyordu.
+    `ProblemRunner` içindeki `.runner__col` sarmalayıcıları dikeyde `display: contents` ile yok sayılır.
 - **Çarpım tablosu (`src/times/`, `/carpim`):** uygulamanın ikinci ana amacı. Ezber değil **türetme
   stratejisi**: her çarpım 10 "aile"den birine düşer (`facts.ts`; aile = çarpanlardan kolay olanı),
   her ailenin bir dersi vardır (`table.ts`, normal ders akışını kullanır, `group: 'carpim'` ile püf

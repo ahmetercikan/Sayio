@@ -110,3 +110,142 @@
   .ct-legend { font-size: 15px; }
   .ct-foot { font-size: 16px; max-width: 640px; }
 }
+
+/* =====================================================================
+   YATAY KULLANIM (tablet ve telefon yan çevrilince)
+   ---------------------------------------------------------------------
+   Ekran genişler ama alçalır. Dikey düzen olduğu gibi kalırsa tuş takımı
+   ve "Kolay yolu göster" gibi düğmeler ekranın altında kalıyor; çocuk
+   kaydırmayı bilmediği için onları hiç görmüyordu.
+
+   Çözüm: ders ekranı ikiye bölünür — solda görsel (defter, somut model),
+   sağda soru, cevap tuşları ve yardım düğmeleri. Dikeyde hiçbir şey
+   değişmez: sarmalayıcılar `display: contents` ile yok sayılır.
+   ===================================================================== */
+@media (orientation: landscape) and (min-width: 720px) and (max-height: 860px) {
+  .lesson__main > * { max-width: 1180px; }
+
+  /* ---- Soru çözücü: solda okunanlar, sağda tuşlar ---- */
+  .runner { grid-template-columns: minmax(0, 1fr) minmax(0, 360px); gap: 10px 24px; align-items: start; }
+  .runner__col { display: grid; gap: 12px; align-content: start; min-width: 0; }
+  /* Soru rozeti ile göz düğmesi yan yana dursun (sütun genişse araları açılmasın). */
+  .runner__head { justify-content: flex-start; gap: 12px; min-height: 0; }
+  .runner__visual { padding: 10px; }
+  .visual__svg { max-height: 38vh; }
+  .notebook__svg { max-height: 46vh; width: auto; margin: 0 auto; }
+  .numpad, .choices, .frame-input { width: 100%; }
+
+  /* ---- Problem: şıklar ve çubuk modelleri yan yana, modeller alçak ---- */
+  .option-list, .model-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .model-opt { padding: 10px; }
+  .model-opt .visual__svg { max-height: 17vh; }
+
+  /* ---- Keşfet (ders girişi) ---- */
+  .intro {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 420px);
+    grid-template-areas: 'art soz' 'art git';
+    grid-template-rows: auto 1fr;
+    gap: 12px 24px;
+    align-items: start;
+  }
+  .intro > .says { grid-area: soz; }
+  .intro__sketch, .intro__card { grid-area: art; }
+  .intro__actions { grid-area: git; align-self: start; justify-content: stretch; }
+  .intro__actions .pill { width: 100%; }
+
+  /* ---- Alçak ekranda dikey boşlukları kıs ---- */
+  .lesson__top { padding-top: calc(var(--safe-top) + 6px); padding-bottom: 2px; }
+  .lesson__main { padding-top: 4px; }
+  .numpad__key { height: 56px; font-size: 28px; }
+  .numpad, .numpad__keys { gap: 10px; }
+  .pill--big { min-height: 64px; font-size: 24px; }
+  .choice { min-height: 72px; }
+  .bubble--ask { font-size: 18px; padding: 10px 14px; }
+  .eq--xl { font-size: clamp(40px, 5vw, 58px); }
+  .eq--lg { font-size: clamp(32px, 4vw, 46px); }
+}
+
+/* ---------------------------------------------------------------------
+   Telefon yan çevrilince ekran iyice alçalır (393-420 px). Tuş takımı
+   küçülür, maskot ufalır, yardım düğmeleri alt alta gelir — hiçbiri
+   ekranın dışında kalmasın.
+   --------------------------------------------------------------------- */
+@media (orientation: landscape) and (max-height: 520px) {
+  /* Alt menü ekranın dörtte birini kaplamasın. */
+  :root { --tabbar-h: 66px; }
+  .tabbar { padding: 5px; border-radius: 22px; }
+  .tabbar__item { padding: 6px 4px 5px; gap: 1px; font-size: 13px; border-radius: 18px; }
+  .tabbar__item svg { width: 22px; height: 22px; }
+
+  .runner { grid-template-columns: minmax(0, 1fr) minmax(0, 280px); gap: 8px 16px; }
+  .runner__col { gap: 8px; }
+  .numpad__key { height: 44px; font-size: 22px; border-radius: 14px; }
+  .numpad, .numpad__keys { gap: 7px; }
+  .numpad__ok { min-height: 46px; font-size: 19px; }
+  .pill { min-height: 52px; min-width: 0; font-size: 20px; padding: 0 22px; }
+  .pill--big { min-height: 56px; font-size: 21px; padding: 0 26px; }
+  .runner__mascot, .says__mascot { width: 40px; height: 40px; }
+  .bubble--ask { font-size: 16px; padding: 8px 12px; }
+  .eq--xl, .eq--lg { font-size: clamp(28px, 4.4vw, 42px); }
+  .notebook__svg, .visual__svg { max-height: 32vh; }
+  .runner__help { flex-direction: column; gap: 8px; }
+  .help-btn { width: 100%; justify-content: center; }
+  .choice { min-height: 56px; font-size: clamp(26px, 4vw, 34px); }
+  .option { padding: 10px 14px; }
+  .lesson__top { padding-top: calc(var(--safe-top) + 4px); }
+  .intro { gap: 8px 16px; }
+  .notebook-caption { padding: 8px 12px; font-size: 15px; }
+
+  /* Şıklar yan yana: üçü birden ekranda dursun. */
+  .option-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .option { padding: 9px 10px; font-size: 15px; }
+  .problem-card__text { font-size: 17px; }
+  .given { gap: 6px; }
+
+  /* Oyun ekranı da ikiye bölünür: solda soru, sağda tuşlar. */
+  .sprint { grid-template-columns: minmax(0, 1fr) minmax(0, 280px); column-gap: 16px; row-gap: 8px; align-items: start; justify-items: stretch; }
+  .sprint > .timebar-lite { grid-column: 1 / -1; }
+  .sprint > .runner__input { grid-column: 2; grid-row: 2 / span 20; }
+  .sprint > .sprint__meta, .sprint > .eq, .sprint > .hint-card, .sprint > .runner__visual { grid-column: 1; }
+}
+
+/* En alçak ekranlar (360-430 px): tuşlar ve yardım düğmeleri son bir kez küçülür. */
+@media (orientation: landscape) and (max-height: 430px) {
+  .numpad__key { height: 38px; font-size: 19px; border-radius: 12px; }
+  .numpad, .numpad__keys { gap: 5px; }
+  .numpad__ok { min-height: 40px; font-size: 17px; }
+  .help-btn { min-height: 36px; padding: 6px 12px; font-size: 15px; }
+  .runner__help { gap: 6px; }
+  .bubble--ask { font-size: 15px; }
+  .eq--xl, .eq--lg { font-size: clamp(26px, 4vw, 34px); }
+  .notebook__svg, .visual__svg { max-height: 28vh; }
+
+  /* Problem ekranı: solda metin, sağda şıklar — üçü birden görünsün. */
+  .polya { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 16px; row-gap: 8px; align-items: start; }
+  .polya > .polya-steps { grid-column: 1 / -1; }
+  .polya > .problem-card { grid-column: 1; }
+  .polya > .stage, .polya > .feedback { grid-column: 2; }
+  .option-list { grid-template-columns: 1fr; }
+  .stage__title { font-size: 17px; }
+  .option { padding: 8px 10px; font-size: 14px; }
+  .problem-card { padding: 10px 12px; }
+  .problem-card__text { font-size: 15px; }
+  .given__chip { font-size: 13px; padding: 3px 8px; }
+  .polya { row-gap: 6px; }
+  .polya-step { padding: 5px 9px; font-size: 12px; }
+  .model-opt .visual__svg { max-height: 20vh; }
+
+  /* Üst ve alt boşlukları kıs: alçak ekranda her piksel soruya gitsin. */
+  .appbar { padding-top: calc(var(--safe-top) + 6px); padding-bottom: 2px; }
+  .app__main { padding-top: 8px; padding-bottom: calc(var(--safe-bottom) + var(--tabbar-h) + 8px); }
+  .stage { gap: 7px; }
+}
+
+/* 360-380 px yüksekliğinde (küçük telefon yan): uzun problem metinleri de sığsın. */
+@media (orientation: landscape) and (max-height: 390px) {
+  .polya-step { padding: 3px 7px; font-size: 11px; gap: 3px; }
+  .polya-step svg { width: 14px; height: 14px; }
+  .option { padding: 7px 10px; font-size: 13.5px; }
+  .problem-card__text { font-size: 14px; }
+  .stage { gap: 5px; }
+}
