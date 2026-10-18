@@ -54,16 +54,32 @@ npm run sync      # web derlemesini ios/ ve android/ içine kopyalar
 
 3. **App Store Connect'te uygulamayı oluştur** — <https://appstoreconnect.apple.com>
    - My Apps → **+** → New App
-   - Platform: iOS · Ad: **Sayio** · Dil: Türkçe · Bundle ID: `com.ahmetercikan.sayio` · SKU: `sayio`
+   - Platform: iOS · Ad: **Sayio: Matematiğin Kolay Yolu** · Dil: Türkçe ·
+     Bundle ID: `com.ahmetercikan.sayio` · SKU: `sayio`
+   - *Yapıldı:* uygulama kaydı 18 Ekim 2026'da açıldı (App ID `6824167930`).
 
-   > **Önce bundle id kaydedilmeli.** New App penceresi yalnızca daha önce kaydedilmiş
-   > kimlikleri listeler. Hesap **ABDURRAHMAN KAAN DIKEC** (Team ID `AQ2Y664A4Z`) ve bu bir
-   > *bireysel* üyelik: App Store Connect'e kullanıcı eklenebiliyor ama geliştirici portalına
-   > (Certificates, Identifiers & Profiles) yalnızca hesap sahibi girebiliyor. Yani
-   > `com.ahmetercikan.sayio` kimliğini **Kaan'ın** kaydetmesi gerekir:
-   > developer.apple.com → Identifiers → **+** → App IDs → App →
-   > Description: `Sayio`, Bundle ID (Explicit): `com.ahmetercikan.sayio` → Register.
-   > (Çizio'nun kimliği de aynı yoldan kaydedilmişti.)
+   > **Önce bundle id kaydedilmeli.** New App penceresi yalnızca kayıtlı kimlikleri listeler.
+   > Kimliği **Xcode kaydeder**: otomatik imzalama (`CODE_SIGN_STYLE = Automatic`,
+   > `DEVELOPMENT_TEAM = AQ2Y664A4Z`) ile arşivleyip dışa aktarınca kimlik ve mağaza profili
+   > kendiliğinden oluşur. Terminalden:
+   >
+   > ```bash
+   > xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release \
+   >   -destination 'generic/platform=iOS' -archivePath /tmp/Sayio.xcarchive \
+   >   -allowProvisioningUpdates archive
+   > xcodebuild -exportArchive -archivePath /tmp/Sayio.xcarchive -exportPath /tmp/export \
+   >   -exportOptionsPlist ExportOptions.plist -allowProvisioningUpdates
+   > ```
+   >
+   > `-allowProvisioningUpdates` olmazsa "no profile found" hatası gelir. Sayio'nun kimliği
+   > 18 Ekim 2026'da bu yolla kaydedildi (profil: *iOS Team Store Provisioning Profile:
+   > com.ahmetercikan.sayio*). Hesap **ABDURRAHMAN KAAN DIKEC** (Team ID `AQ2Y664A4Z`);
+   > developer.apple.com web sayfası bu Apple ID'de yalnızca süresi dolmuş Kartek takımını
+   > gösteriyor, ama Xcode doğru takımla imzalıyor — kimlik kaydı oradan yapılıyor.
+   >
+   > `ExportOptions.plist`: method `app-store-connect`, teamID `AQ2Y664A4Z`,
+   > signingStyle `automatic`, uploadSymbols `true`; yüklemek için ayrıca
+   > `destination` = `upload` (Xcode'daki hesapla yükler, ayrı parola istemez).
 
 4. **Arşivle ve yükle.** Xcode'da üstteki cihaz seçicide **Any iOS Device** seç →
    menüden **Product → Archive** → arşiv penceresinde **Distribute App** → *App Store Connect* → Upload.
