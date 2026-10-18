@@ -32,7 +32,8 @@
   parça üretilir** — cümleyi bölüp birleştirmeyi denedik, olmadı (rakamların sonu yutuluyor, cümle
   bütünlüğü bozuluyor). Kapsam: sabit yönergeler + ders fikirleri her yaş, sorular ve sözel problemler
   4-7 yaş, **çarpım tablosu bölümünün tamamı her yaş** (oralarda anlatım otomatik açık); kaydı
-  olmayan cümle cihaz sesine düşer. Bir adım ekranda **üç ayrı cümledir** (kutu dolu / kutu boş /
+  olmayan cümle cihaz sesine düşer — ama **kendiliğinden okunmaz**, yalnızca çocuk 🔊 düğmesine
+  basarsa (8-14 yaşta Keşfet adımları da bu yüzden sessiz açılır: `voiced`, `pages/Lesson.tsx`). Bir adım ekranda **üç ayrı cümledir** (kutu dolu / kutu boş /
   yönergeli soru) — üçünün de kaydı üretilir, yoksa biri cihaz sesine düşer.
   4-7 yaş sözel problemlerinde isim/nesne çeşidi bilerek dar (`word.ts` → `DAR_ISIM`, `DAR_NESNE`).
   Tuzaklar ve komutlar: **docs/ses.md** — özellikle `next_text` kullanma, rakamları yazıyla gönder.

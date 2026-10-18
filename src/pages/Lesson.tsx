@@ -120,7 +120,7 @@ function LessonFlow({ trick }: { trick: Trick }) {
 
       <main className="lesson__main">
         {phase === 'learn' && (
-          <Intro trick={trick} example={example} young={young} onStart={() => { sfx.pop(); setPhase('guided'); setIdx(0); }} />
+          <Intro trick={trick} example={example} young={young} voiced={young || carpim} onStart={() => { sfx.pop(); setPhase('guided'); setIdx(0); }} />
         )}
         {phase === 'guided' && (
           <ProblemRunner key={`g${round}-${idx}`} problem={guidedQs[idx]} band={profile.band} mode="guided" onDone={onGuided} autoSpeak={young || carpim} />
@@ -152,7 +152,7 @@ function LessonFlow({ trick }: { trick: Trick }) {
 }
 
 /** Keşfet: fikir + örneğin adım adım açılması. */
-function Intro({ trick, example, young, onStart }: { trick: Trick; example: Problem; young: boolean; onStart: () => void }) {
+function Intro({ trick, example, young, voiced, onStart }: { trick: Trick; example: Problem; young: boolean; voiced: boolean; onStart: () => void }) {
   const settings = useApp((s) => s.settings);
   const [shown, setShown] = useState(0);
   const [model, setModel] = useState(false);
@@ -168,7 +168,10 @@ function Intro({ trick, example, young, onStart }: { trick: Trick; example: Prob
   const reveal = () => {
     sfx.right();
     const s = steps[shown];
-    if (settings.narration && s) speak(`${s.say} ${s.eq.replace('?', fmt(s.answer))}`, { rate: settings.rate });
+    // Adımı yalnızca kaydı olan bölümlerde kendiliğinden okuruz (küçükler + çarpım tablosu).
+    // 8-14 yaşın püf sorularının doğal ses kaydı yok; otomatik okursak çocuk cihazın robot
+    // sesini duyar. O yaşta çocuk ekrandan okuyor; isterse 🔊 düğmesine basar.
+    if (settings.narration && voiced && s) speak(`${s.say} ${s.eq.replace('?', fmt(s.answer))}`, { rate: settings.rate });
     setShown(shown + 1);
   };
 

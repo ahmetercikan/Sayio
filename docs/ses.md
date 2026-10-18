@@ -40,6 +40,11 @@ Bunları tekrar denemeyin, hepsi ölçüldü:
 | **Çarpım tablosu bölümü** | **Her yaş, her çarpan** | 2. sınıf konuyu dinleyerek anlıyor; bölüm 10 aile × 1-10 çarpan, yani tamamı üretilebiliyor |
 | 8-14 yaşın püf noktası soruları | Yok | O yaşta anlatım otomatik açılmaz; çocuk ekrandan okur |
 
+**Kaydı olmayan cümle kendiliğinden okunmaz.** Robot ses ancak çocuk 🔊 düğmesine basarsa duyulur:
+8-14 yaşın püf soruları ve sözel problemleri. Bu yüzden Keşfet ekranı 8-14 yaşta adımı sesli
+açmaz (`voiced`, `src/pages/Lesson.tsx`) — eskiden açıyordu ve robot ses oradan duyuluyordu.
+Hepsinin kaydını üretmek 2,1 milyon kredi ve ~850 MB eder; uygulama mağaza sınırını aşar.
+
 Toplam **4.515 cümle**, ~137 MB. Ölçülen kapsama: 4-7 yaş **%100** (478.000 cümle denendi),
 çarpım tablosu **%100** (872 cümle; 10 ailenin 1-10 arası her çarpanı + günün turundaki 55 çarpım).
 
