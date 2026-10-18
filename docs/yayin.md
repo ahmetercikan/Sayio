@@ -147,7 +147,12 @@ cd android && ./gradlew bundleRelease
 1. **Create app** → Ad: `Sayio: Matematiğin Kolay Yolu` · Paket: `com.ahmetercikan.sayio` ·
    Dil: Türkçe · Uygulama · Ücretsiz · iki beyan kutusu işaretli
    (hesap: **KingSmile Studios**)
-2. **Testing → Internal testing** ile başla (kendi telefonunda dene), sonra Production.
+   *Yapıldı:* 18 Ekim 2026'da açıldı (uygulama kimliği `4976144576522169945`).
+2. **Test etme → Dahili test** ile başla (kendi telefonunda dene), sonra Üretim.
+   Sürüm sayfasına `android/app/build/outputs/bundle/release/app-release.aab` dosyası
+   sürüklenir. İlk yüklemede Play, **App Signing**'i açmayı önerir — kabul et:
+   asıl imza anahtarını Google saklar, bizimki yalnızca yükleme anahtarı olur ve
+   kaybolursa sıfırlanabilir.
 3. Doldurulması zorunlu bölümler:
    - **App content → Privacy policy:** aşağıya bak.
    - **Data safety:** "No data collected" / "No data shared" işaretle.
