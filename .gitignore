@@ -14,3 +14,7 @@ voice/secim-*
 # NOT: public/voice/ (üretilen ses parçaları) BİLEREK git'e girer — web sürümü ve
 # GitHub Actions derlemesi de doğal sesi kullanabilsin diye. Dosya adları metnin
 # özetinden üretildiği için aynı sesle tekrar üretmek yeni dosya oluşturmaz.
+
+# Mağaza görselleri üretilir (store/README.md), git'e girmez: ~70 MB.
+store/screenshots/
+store/promo/
