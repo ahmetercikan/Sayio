@@ -56,6 +56,15 @@ npm run sync      # web derlemesini ios/ ve android/ içine kopyalar
    - My Apps → **+** → New App
    - Platform: iOS · Ad: **Sayio** · Dil: Türkçe · Bundle ID: `com.ahmetercikan.sayio` · SKU: `sayio`
 
+   > **Önce bundle id kaydedilmeli.** New App penceresi yalnızca daha önce kaydedilmiş
+   > kimlikleri listeler. Hesap **ABDURRAHMAN KAAN DIKEC** (Team ID `AQ2Y664A4Z`) ve bu bir
+   > *bireysel* üyelik: App Store Connect'e kullanıcı eklenebiliyor ama geliştirici portalına
+   > (Certificates, Identifiers & Profiles) yalnızca hesap sahibi girebiliyor. Yani
+   > `com.ahmetercikan.sayio` kimliğini **Kaan'ın** kaydetmesi gerekir:
+   > developer.apple.com → Identifiers → **+** → App IDs → App →
+   > Description: `Sayio`, Bundle ID (Explicit): `com.ahmetercikan.sayio` → Register.
+   > (Çizio'nun kimliği de aynı yoldan kaydedilmişti.)
+
 4. **Arşivle ve yükle.** Xcode'da üstteki cihaz seçicide **Any iOS Device** seç →
    menüden **Product → Archive** → arşiv penceresinde **Distribute App** → *App Store Connect* → Upload.
 
@@ -102,6 +111,12 @@ Bu dosya ve `.keystore` git'e **girmez** (`.gitignore` içinde).
 
 > Anahtar dosyasını ve parolaları bir parola yöneticisinde sakla.
 
+**Durum:** anahtar **18 Ekim 2026**'da oluşturuldu — `android/sayio-release.keystore`
+(alias `sayio`, 2054'e kadar geçerli, SHA-256 `43:24:32:DF:…`). Parola
+`android/keystore.properties` içinde; ikisi de git'e girmiyor, izinleri 600.
+**Bu iki dosyayı yedekle** — bu Mac giderse uygulama bir daha güncellenemez.
+(Play'de "App Signing" açılırsa asıl anahtarı Google saklar, yükleme anahtarı sıfırlanabilir.)
+
 ### Derleme
 
 ```bash
@@ -113,7 +128,9 @@ cd android && ./gradlew bundleRelease
 
 ### Play Console adımları
 
-1. **Create app** → Ad: Sayio · Dil: Türkçe · Uygulama · Ücretsiz
+1. **Create app** → Ad: `Sayio: Matematiğin Kolay Yolu` · Paket: `com.ahmetercikan.sayio` ·
+   Dil: Türkçe · Uygulama · Ücretsiz · iki beyan kutusu işaretli
+   (hesap: **KingSmile Studios**)
 2. **Testing → Internal testing** ile başla (kendi telefonunda dene), sonra Production.
 3. Doldurulması zorunlu bölümler:
    - **App content → Privacy policy:** aşağıya bak.
