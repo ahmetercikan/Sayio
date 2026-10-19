@@ -61,12 +61,21 @@ if (!hepsi) {
 if (!liste.length) die('Denetlenecek ses parçası bulunamadı.');
 console.log(`${liste.length} parça denetleniyor (ElevenLabs Scribe)…`);
 
+/**
+ * Uygulamanın adını yazıya çeviren servis her seferinde başka yazıyor ("Sayo", "Saio",
+ * "Sayiyo"…) — ad sözlükte olmadığı için. Hepsini tek yazıma indiriyoruz ki denetim boş
+ * yere uyarmasın; adın gerçekten başka bir kelimeye dönüşmesi yine yakalanır.
+ */
+const adiDuzle = (s) => s.replace(/\bsa+y?i*y?o+\b/g, 'sayio');
+
 /** Karşılaştırma için sadeleştir: küçük harf, noktalama yok, rakamlar yazıyla. */
 const sade = (s) =>
-  sayilariYaziyaCevir(s)
-    .toLowerCase()
-    .replace(/[^\p{L}\p{N}]+/gu, ' ')
-    .trim();
+  adiDuzle(
+    sayilariYaziyaCevir(s)
+      .toLowerCase()
+      .replace(/[^\p{L}\p{N}]+/gu, ' ')
+      .trim(),
+  );
 /** Kelime bölünmesi/birleşmesi gerçek hata değil ("iki ile" ↔ "ikiyle"): boşlukları da at. */
 const cok = (s) => sade(s).replace(/\s+/g, '');
 

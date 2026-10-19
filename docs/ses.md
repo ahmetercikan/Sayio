@@ -38,9 +38,11 @@ Bunları tekrar denemeyin, hepsi ölçüldü:
 6. **"Can" yazımla düzeltilir.** Bağlamdan sonra bile İngilizce "can" sanılıp *"Ken"/"Kaan"*
    okunuyordu. `telaffuzDuzelt()` seslendirme metninde "Can" yerine **Djan** gönderir; ekranda
    çocuk yine "Can" görür, dosya adı da değişmez.
-7. **Açık kalan tek madde: "Sayio" adı.** Ses "Sayo" gibi okuyor (ortadaki i kısalıyor).
-   Sayiyo, Say-yi-o, Sayi-o, Sayıo, Sayyio… hepsi denendi, sonuç değişmedi. İki cümleyi
-   etkiliyor (açılış ve "büyüğünü çağır").
+7. **"Sayio" adı üç hecedir: sa-yi-o.** Model adı "Sayo" diye sıkıştırıyordu. Yazıya çeviren
+   servis bu ikisini ayırt edemiyor (ikisine de "Sayo" yazıyor), bu yüzden süre ölçüldü:
+   "Sa-yi-o" yazınca ad 440 ms yerine 580-660 ms sürüyor, ortadaki i'nin bölgesi 210 ms
+   yerine 250-340 ms. Yani orta hece gerçekten okunuyor. Düzeltme `telaffuzDuzelt()` içinde;
+   iki cümleyi etkiliyor (açılış ve "büyüğünü çağır").
 
 ## Telaffuz denetimi
 

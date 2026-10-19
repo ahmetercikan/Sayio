@@ -229,12 +229,12 @@ export const ONCEKI_METIN = 'Şimdi sıra sende.';
  * Yalnızca SESLENDİRME metnine uygulanan yazım düzeltmeleri: ekranda çocuk doğru yazımı
  * görür, dosya adları da değişmez (clipKey özgün metinden hesaplanır).
  *
- * Bağlam cümlesinden sonra yanlış okunan tek şey "Can" kaldı: İngilizce "can" sanıp
- * "Ken" / "Kaan" diyordu; "Djan" yazınca "Can" diyor.
- *
- * ("Sayio" adı "Sayo" gibi duyuluyor; denenen bütün yazımlar aynı sonucu verdi, bu yüzden
- * olduğu gibi bırakıldı — ses denetiminde tek açık kalan madde.)
+ * İki kelime böyle düzeltildi:
+ *  - "Can": İngilizce "can" sanıp "Ken" / "Kaan" diyordu; "Djan" yazınca "Can" diyor.
+ *  - "Sayio": adı "Sayo" diye sıkıştırıyordu (ortadaki i yutuluyor); doğrusu üç hece,
+ *    "sa-yi-o". "Sa-yi-o" yazınca ad 440 ms yerine 580-660 ms sürüyor ve ortadaki i
+ *    gerçekten okunuyor (ölçüldü: ad içindeki yüksek F2 bölgesi 210 ms → 250-340 ms).
  */
 export function telaffuzDuzelt(text: string): string {
-  return text.replace(/\bCan\b/g, 'Djan');
+  return text.replace(/\bCan\b/g, 'Djan').replace(/\bSayio\b/g, 'Sa-yi-o');
 }
