@@ -210,3 +210,31 @@ export function sayilariYaziyaCevir(text: string): string {
     return söz + ek;
   });
 }
+
+/* ---------------------------------------------------------- telaffuz */
+
+/**
+ * Üretimde her cümlenin ÖNÜNE konan, ama okunmayan Türkçe bağlam cümlesi.
+ *
+ * Neden: ElevenLabs cümlenin İLK kelimesini hangi dile ait sanırsa ona göre okuyor.
+ * Bağlam yokken ölçtüğümüz hatalar: "Geri saymak zor!" → "Jerry saymak zor",
+ * "Kurbağa…" → "Kürbağa…", "Ali…" → "Ale…", "Saymadan bak" → "Seyma'dan bak".
+ * `previous_text` verilince model cümleyi Türkçe bir konuşmanın ortası sayıyor ve
+ * ilk kelime düzeliyor (ses süresi de kısalmıyor; ölçüldü).
+ * `next_text` ise sesi yarıda kesiyor — onu kullanma (docs/ses.md).
+ */
+export const ONCEKI_METIN = 'Şimdi sıra sende.';
+
+/**
+ * Yalnızca SESLENDİRME metnine uygulanan yazım düzeltmeleri: ekranda çocuk doğru yazımı
+ * görür, dosya adları da değişmez (clipKey özgün metinden hesaplanır).
+ *
+ * Bağlam cümlesinden sonra yanlış okunan tek şey "Can" kaldı: İngilizce "can" sanıp
+ * "Ken" / "Kaan" diyordu; "Djan" yazınca "Can" diyor.
+ *
+ * ("Sayio" adı "Sayo" gibi duyuluyor; denenen bütün yazımlar aynı sonucu verdi, bu yüzden
+ * olduğu gibi bırakıldı — ses denetiminde tek açık kalan madde.)
+ */
+export function telaffuzDuzelt(text: string): string {
+  return text.replace(/\bCan\b/g, 'Djan');
+}

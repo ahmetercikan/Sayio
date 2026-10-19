@@ -14,7 +14,7 @@ Bu yüzden **her cümle baştan sona tek seferde üretilir**. `src/lib/voice.ts`
 bulup çalar — kırpma, es ayarı, birleştirme yok. Kaydı olmayan bir cümle çıkarsa o cümle cihazın
 kendi sesiyle okunur (ses hiçbir zaman kesilmez).
 
-## Yol boyunca ölçülen üç şey
+## Yol boyunca ölçülenler
 
 Bunları tekrar denemeyin, hepsi ölçüldü:
 
@@ -30,6 +30,32 @@ Bunları tekrar denemeyin, hepsi ölçüldü:
    - Keşfet, adımı açarken kutuyu **dolu** okur: `Önce 10 kere al: 8 × 10 = 80`
    - Birlikte yapalım kutuyu **boş** sorar: `Önce 10 kere al: 8 × 10 = ?`
    - Sen yap / günün turu yönergeyle sorar: `Kolay yolu düşün ve cevapla! 8 × 5 = ?`
+5. **Cümlenin ilk kelimesine dikkat.** ElevenLabs ilk kelimeyi hangi dile ait sanırsa ona göre
+   okuyor: bağlam vermeden `"Geri saymak zor!"` → *"Jerry saymak zor"*, `"Kurbağa…"` → *"Kürbağa…"*,
+   `"Ali…"` → *"Ale…"*, `"Saymadan bak"` → *"Seyma'dan bak"* çıkıyordu. Çözüm: her isteğe
+   **okunmayan** bir Türkçe bağlam cümlesi eklemek (`previous_text`, `ONCEKI_METIN`
+   → `src/lib/voiceText.ts`). Ses süresi kısalmıyor — `next_text` gibi değil, ölçüldü.
+6. **"Can" yazımla düzeltilir.** Bağlamdan sonra bile İngilizce "can" sanılıp *"Ken"/"Kaan"*
+   okunuyordu. `telaffuzDuzelt()` seslendirme metninde "Can" yerine **Djan** gönderir; ekranda
+   çocuk yine "Can" görür, dosya adı da değişmez.
+7. **Açık kalan tek madde: "Sayio" adı.** Ses "Sayo" gibi okuyor (ortadaki i kısalıyor).
+   Sayiyo, Say-yi-o, Sayi-o, Sayıo, Sayyio… hepsi denendi, sonuç değişmedi. İki cümleyi
+   etkiliyor (açılış ve "büyüğünü çağır").
+
+## Telaffuz denetimi
+
+Ses üretildikten sonra **kulakla değil ölçerek** denetlenir: `npm run ses:denetle` her cümle
+kalıbından bir örneği ElevenLabs Scribe ile yazıya çevirip beklenen cümleyle karşılaştırır
+(`scripts/voice/audit.mjs`). Yukarıdaki altı hata böyle bulundu. Seçenekler:
+`-- --hepsi` (bütün parçalar, pahalı), `-- --ara kurbağa` (tek kelimeyi ara).
+
+Yanlış okunan bir kelime bulunca: düzeltmeyi `telaffuzDuzelt()` içine yaz, o kelimenin geçtiği
+parçaları `public/voice/` içinden sil, `npm run ses:uret` ile yeniden üret, `npm run ses:denetle`
+ile doğrula. **Dosya adları metnin özetinden hesaplandığı için değişmez** — uygulamada tek satır
+kod değişmeden ses düzelir.
+
+Denetimin sınırı: Scribe küçük tonlama ve ünlü kaymalarını kendiliğinden düzeltip doğru yazabilir.
+Yani "fark yok" demek "ses kusursuz" demek değil; ama çıkan her fark gerçek bir hatadır.
 
 ## Neyin sesi var?
 
@@ -79,6 +105,7 @@ Varsayılanlar `scripts/voice/generate.mjs` içinde: ses `İrem`, model `eleven_
 | --- | --- |
 | `npm run ses:topla` | Söylenebilecek bütün cümleleri tarar → `voice/clips.json` |
 | `npm run ses:uret` | Eksik cümleleri üretir (yarıda kalırsa kaldığı yerden devam eder) |
+| `npm run ses:denetle` | Üretilmiş sesleri yazıya çevirip yanlış okunan kelimeyi bulur |
 | `npm run ses:sesler` | Hesaptaki sesleri listeler |
 | `npm run ses:sec` | Aday sesleri gerçek Sayio cümleleriyle dinletir → `voice/secim-*.m4a` |
 | `npm run ses:temizle` | Üretilmiş bütün sesleri siler |
@@ -96,6 +123,7 @@ Yeni sesli cümleleri `src/lib/narration.ts` içine yazarsan betik onları da ot
 - `public/voice/*.m4a` — cümlelerin sesi (dosya adı metnin özeti; aynı metin hep aynı dosya)
 - `public/voice/manifest.json` — hangi cümlelerin hazır olduğu
 - `voice/clips.json` — üretilecek cümle listesi (git'e girer)
-- `src/lib/voiceText.ts` — dosya adı üretimi + sayıları yazıya çevirme
+- `src/lib/voiceText.ts` — dosya adı üretimi, sayıları yazıya çevirme, telaffuz düzeltmeleri
+- `scripts/voice/audit.mjs` — telaffuz denetimi (`npm run ses:denetle`)
 - `src/lib/voice.ts` — çalma katmanı
 - `src/lib/speech.ts` — doğal ses → cihaz sesi sıralaması

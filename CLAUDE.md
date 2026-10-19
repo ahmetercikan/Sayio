@@ -39,6 +39,9 @@
   basarsa (8-14 yaşta Keşfet adımları da bu yüzden sessiz açılır: `voiced`, `pages/Lesson.tsx`). Bir adım ekranda **üç ayrı cümledir** (kutu dolu / kutu boş /
   yönergeli soru) — üçünün de kaydı üretilir, yoksa biri cihaz sesine düşer.
   4-7 yaş sözel problemlerinde isim/nesne çeşidi bilerek dar (`word.ts` → `DAR_ISIM`, `DAR_NESNE`).
+  Üretilen sesi **ölçerek denetle**: `npm run ses:denetle` (Scribe ile yazıya çevirip beklenen
+  cümleyle karşılaştırır; "Kurbağa" → "Kürbağa", "Geri" → "Jerry" gibi hatalar böyle bulundu).
+  Telaffuz düzeltmeleri `telaffuzDuzelt()` + `ONCEKI_METIN` (src/lib/voiceText.ts).
   Tuzaklar ve komutlar: **docs/ses.md** — özellikle `next_text` kullanma, rakamları yazıyla gönder.
   Yeni sesli cümleleri `src/lib/narration.ts` içine yaz ki üretim betiği bulsun.
 - **Telefon/tablet uygulaması:** Capacitor 8 (`ios/`, `android/`). `npm run sync` web derlemesini iki

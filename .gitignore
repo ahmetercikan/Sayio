@@ -19,3 +19,6 @@ voice/secim-*
 store/screenshots/
 store/promo/
 store/yatay/
+
+# Telaffuz denemeleri ve karşılaştırma dosyaları
+voice/telaffuz/

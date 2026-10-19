@@ -12,7 +12,7 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync
 import { execFileSync } from 'node:child_process';
 import { resolve } from 'node:path';
 
-const { sayilariYaziyaCevir } = await import('../../node_modules/.cache/sayio-voicetext.mjs');
+const { sayilariYaziyaCevir, telaffuzDuzelt, ONCEKI_METIN } = await import('../../node_modules/.cache/sayio-voicetext.mjs');
 
 const OUT = 'public/voice';
 const TMP = 'node_modules/.cache/sayio-voice';
@@ -107,7 +107,9 @@ async function synth(clip, attempt = 0) {
     body: JSON.stringify({
       // Rakamlar okunuşlarıyla gönderilir ("60" yerine "altmış"): rakam olarak gönderince
       // model telaffuzu aceleye getirip başını/sonunu yutuyor. Ölçüldü, bkz. docs/ses.md.
-      text: sayilariYaziyaCevir(clip.text),
+      text: telaffuzDuzelt(sayilariYaziyaCevir(clip.text)),
+      // Okunmayan Türkçe bağlam: ilk kelimeyi yabancı dil sanmasın (bkz. voiceText.ts).
+      previous_text: ONCEKI_METIN,
       model_id: MODEL,
       // Çocuklara anlatım: kararlı, net, biraz yayarak (hız 1'in altı = daha anlaşılır).
       voice_settings: {
